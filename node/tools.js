@@ -12,18 +12,23 @@ function slugify(text) {
         .replace(/-+$/, '');
 }
 
-module.exports = {
+function fileExists(filePath) {
+    try {
+        return fs.statSync(filePath).isFile();
+    } catch (err) {
+        return false;
+    }
+}
 
+module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
-
-    processTrack: function (track) {
+    processTrack: function(track) {
         if (track) {
             http.get({
                 hostname: 'developer.echonest.com',
                 path: '/api/v4/artist/terms?api_key=DJQBV7G7ZFUC7CZAZ&format=json&name=' + encodeURIComponent(track.artist["#text"]),
             }, (response) => {
-
                 var data = "";
                 response.on("data", function(chunk) {
                     data += chunk;
@@ -34,9 +39,7 @@ module.exports = {
                     terms.forEach(function(item) {
                         genres.push(item.name);
                     });
-
                     data = '';
-
                     https.get({
                         hostname: 'api.spotify.com',
                         path: '/v1/search?query=' + encodeURIComponent(track.name) + '&offset=0&limit=50&type=track'
@@ -55,38 +58,47 @@ module.exports = {
                                     }
                                 });
                             });
-
                             if (preview_url) {
-                                var dir = 'mkdir -p ../tmp';
-                                var child = exec(dir, function(err, stdout, stderr) {
-                                    if (err) {
-                                        throw err;
-                                    } else {
-                                        var file = fs.createWriteStream('../tmp/' + slugify(track.artist["#text"] + track.name) + '.mp3');
-                                        https.get({
-                                            hostname: 'p.scdn.co',
-                                            path: preview_url.replace('https://p.scdn.co', '')
-                                        }, (response) => {
-                                            response.on("data", function(data) {
-                                                file.write(data);
-                                            });
-                                            response.on("end", function() {
-                                                file.end();
-
-                                                var processFile = exec('python ../python/tempo-beats.py ../tmp/' + slugify(track.artist["#text"] + track.name) + '.mp3', function(err, stdout, stderr) {
-                                                    if (err) {
-                                                        throw err;
-                                                    } else {
-                                                        var bpm = stdout.replace('\n', '');
-                                                        console.log('\nMusic:', track.name, '\nArist: ' + track.artist["#text"], ' \nGenres: (' + genres.toString() + ') \nBPM: ' + bpm);
-                                                    }
+                                var filePath = '../tmp/' + slugify(track.artist["#text"] + '-' + track.name) + '.mp3';
+                                if (fileExists(filePath)) {
+                                    var processFile = exec('python ../python/tempo-beats.py ' + filePath, function(err, stdout, stderr) {
+                                        if (err) {
+                                            throw err;
+                                        } else {
+                                            var bpm = stdout.replace('\n', '');
+                                            console.log('\nMusic:', track.name, '\nArist: ' + track.artist["#text"], ' \nGenres: (' + genres.toString() + ') \nBPM: ' + bpm);
+                                        }
+                                    });
+                                } else {
+                                    var dir = 'mkdir -p ../tmp';
+                                    var child = exec(dir, function(err, stdout, stderr) {
+                                        if (err) {
+                                            throw err;
+                                        } else {
+                                            var file = fs.createWriteStream(filePath);
+                                            https.get({
+                                                hostname: 'p.scdn.co',
+                                                path: preview_url.replace('https://p.scdn.co', '')
+                                            }, (response) => {
+                                                response.on("data", function(data) {
+                                                    file.write(data);
                                                 });
+                                                response.on("end", function() {
+                                                    file.end();
+                                                    var processFile = exec('python ../python/tempo-beats.py ' + filePath, function(err, stdout, stderr) {
+                                                        if (err) {
+                                                            throw err;
+                                                        } else {
+                                                            var bpm = stdout.replace('\n', '');
+                                                            console.log('\nMusic:', track.name, '\nArist: ' + track.artist["#text"], ' \nGenres: (' + genres.toString() + ') \nBPM: ' + bpm);
+                                                        }
+                                                    });
 
+                                                })
                                             })
-                                        })
-                                    }
-                                });
-
+                                        }
+                                    });
+                                }
                             } else {
                                 console.log('\nfile not found for processing');
                             }

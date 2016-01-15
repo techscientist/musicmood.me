@@ -61,7 +61,7 @@ module.exports = {
                             if (preview_url) {
                                 var filePath = '../tmp/' + slugify(track.artist["#text"] + '-' + track.name) + '.mp3';
                                 if (fileExists(filePath)) {
-                                    var processFile = exec('python ../python/tempo-beats.py ' + filePath, function(err, stdout, stderr) {
+                                    var processFile = exec('python ../python/processor.py ' + filePath, function(err, stdout, stderr) {
                                         if (err) {
                                             throw err;
                                         } else {
@@ -85,7 +85,7 @@ module.exports = {
                                                 });
                                                 response.on("end", function() {
                                                     file.end();
-                                                    var processFile = exec('python ../python/tempo-beats.py ' + filePath, function(err, stdout, stderr) {
+                                                    var processFile = exec('python ../python/processor.py ' + filePath, function(err, stdout, stderr) {
                                                         if (err) {
                                                             throw err;
                                                         } else {

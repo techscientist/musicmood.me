@@ -28,3 +28,5 @@ node_modules
 
 # tmp folder
 tmp/*
+
+.DS_Store

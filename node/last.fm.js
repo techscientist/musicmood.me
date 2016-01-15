@@ -8,13 +8,19 @@ var lastfm = new LastFmNode({
 
 var trackStream = lastfm.stream('chr0nu5');
 
-trackStream.on('lastPlayed', function(track) {
-    tools.processTrack(track);
-});
+function processTrack(track) {
+    tools.processTrack(track)
+        .then((info) => {
+            console.log(`\nMusic: ${info.music}\nArtist: ${info.artist}\nGenres: (${info.genres.toString()}) \nBPM: ${info.bpm}`);
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
 
-trackStream.on('nowPlaying', function(track) {
-    tools.processTrack(track);
-});
+trackStream.on('lastPlayed', processTrack);
+
+trackStream.on('nowPlaying', processTrack);
 
 trackStream.on('scrobbled', function(track) {
     //functions.processTrack(track);

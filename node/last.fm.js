@@ -20,17 +20,17 @@ function processTrack(track) {
         })
 }
 
-trackStream.on('lastPlayed', processTrack);
+//trackStream.on('lastPlayed', processTrack);
 
 trackStream.on('nowPlaying', processTrack);
 
-trackStream.on('scrobbled', function(track) {
-    //functions.processTrack(track);
-});
+// trackStream.on('scrobbled', function(track) {
+//     //functions.processTrack(track);
+// });
 
-trackStream.on('stoppedPlaying', function(track) {
-    //functions.processTrack(track);
-});
+// trackStream.on('stoppedPlaying', function(track) {
+//     //functions.processTrack(track);
+// });
 
 trackStream.on('error', function(error) {
     console.log('Weird Error: ', error);

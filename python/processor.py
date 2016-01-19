@@ -15,8 +15,13 @@ def get_harmonic_percussive(filePath, type='harmonic'):
     y_harmonic, y_percussive = librosa.effects.hpss(y)
 
     if type == 'harmonic':
-        return y_harmonic
+        f = open('../tmp/_harmonic.txt','w')
+        values = sorted([abs(x) + abs(y) for x, y in zip(y_harmonic, y_percussive)], key=int)
+        for result in values:
+            f.write(str(int(result*100000000)) + "\n")
+        f.close()
+        return len(y_harmonic)
     else:
         return y_percussive
 
-print get_tempo(sys.argv[1])
+print get_harmonic_percussive(sys.argv[1])

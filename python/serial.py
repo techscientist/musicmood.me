@@ -15,8 +15,8 @@
 #
 # 	mSerial = serial.Serial(serdev, baudrate = 230400)
 
-import serial
-serial.Serial('/dev/ttyACM0', baudrate = 230400)
+import serial as sr
+mSerial = sr.Serial('/dev/ttyACM0', baudrate = 230400)
 
 mSerial.write(chr(0x6B))
 mSerial.write(chr(0x8D))

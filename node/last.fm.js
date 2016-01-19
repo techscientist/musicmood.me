@@ -27,47 +27,47 @@
 //
 // trackStream.start();
 
-// var serialPort = require("serialport");
-// serialPort.list(function (err, ports) {
-//   ports.forEach(function(port) {
-//     console.log(port.comName);
-//     console.log(port.pnpId);
-//     console.log(port.manufacturer);
+var serialPort = require("serialport");
+serialPort.list(function (err, ports) {
+  ports.forEach(function(port) {
+    console.log(port.comName);
+    console.log(port.pnpId);
+    console.log(port.manufacturer);
+  });
+});
+
+// var SerialPort = require("serialport").SerialPort
+// var serialPort = new SerialPort("/dev/ttyAMA0", {
+//   baudrate: 230400
+// });
+//
+// serialPort.on("open", function () {
+//   console.log('open');
+//   serialPort.on('data', function(data) {
+//     console.log('data received: ' + data);
+//   });
+//   serialPort.write(String.fromCharCode(0x6B), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
+//   });
+//   serialPort.write(String.fromCharCode(0x8D), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
+//   });
+//   serialPort.write(String.fromCharCode(255), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
+//   });
+//   serialPort.write(String.fromCharCode(0), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
+//   });
+//   serialPort.write(String.fromCharCode(255), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
+//   });
+//   serialPort.write(String.fromCharCode(2), function(err, results) {
+//     console.log('err ' + err);
+//     console.log('results ' + results);
 //   });
 // });
-
-var SerialPort = require("serialport").SerialPort
-var serialPort = new SerialPort("/dev/ttyAMA0", {
-  baudrate: 230400
-});
-
-serialPort.on("open", function () {
-  console.log('open');
-  serialPort.on('data', function(data) {
-    console.log('data received: ' + data);
-  });
-  serialPort.write(String.fromCharCode(0x6B), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-  serialPort.write(String.fromCharCode(0x8D), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-  serialPort.write(String.fromCharCode(255), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-  serialPort.write(String.fromCharCode(0), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-  serialPort.write(String.fromCharCode(255), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-  serialPort.write(String.fromCharCode(2), function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
-});

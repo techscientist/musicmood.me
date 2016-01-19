@@ -46,27 +46,27 @@ serialPort.on("open", function () {
   serialPort.on('data', function(data) {
     console.log('data received: ' + data);
   });
-  serialPort.write(0x6B, function(err, results) {
+  serialPort.write(String.fromCharCode(0x6B), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write(0x8D, function(err, results) {
+  serialPort.write(String.fromCharCode(0x8D), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write(255, function(err, results) {
+  serialPort.write(String.fromCharCode(255), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write(0, function(err, results) {
+  serialPort.write(String.fromCharCode(0), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write(255, function(err, results) {
+  serialPort.write(String.fromCharCode(255), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write(2, function(err, results) {
+  serialPort.write(String.fromCharCode(2), function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });

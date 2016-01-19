@@ -79,13 +79,20 @@ module.exports = {
                     }
                 })
                 .then((preview_url) => {
-                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
-                    if (fileExists(filePath)) {
-                        return logBPM(filePath);
-                    } else {
-                        return downloadFile(preview_url, filePath)
-                            .then(() => logBPM(filePath));
-                    }
+                    var dir = 'mkdir -p ../tmp';
+                    var child = exec(dir, (err, stdout, stderr) => {
+                        if (err) {
+                            throw err;
+                        }else{
+                            var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
+                            if (fileExists(filePath)) {
+                                return logBPM(filePath);
+                            } else {
+                                return downloadFile(preview_url, filePath)
+                                    .then(() => logBPM(filePath));
+                            }
+                        }
+                    })
                 })
                 .then((bpm) => {
                     return {

@@ -27,14 +27,14 @@
 //
 // trackStream.start();
 
-var serialPort = require("serialport");
-serialPort.list(function (err, ports) {
-  ports.forEach(function(port) {
-    console.log(port.comName);
-    console.log(port.pnpId);
-    console.log(port.manufacturer);
-  });
-});
+// var serialPort = require("serialport");
+// serialPort.list(function (err, ports) {
+//   ports.forEach(function(port) {
+//     console.log(port.comName);
+//     console.log(port.pnpId);
+//     console.log(port.manufacturer);
+//   });
+// });
 
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/ttyAMA0", {
@@ -46,8 +46,15 @@ serialPort.on("open", function () {
   serialPort.on('data', function(data) {
     console.log('data received: ' + data);
   });
-  serialPort.write("ls\n", function(err, results) {
+  serialPort.write(chr, function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
 });
+
+mSerial.write(0x6B)
+mSerial.write(0x8D)
+mSerial.write(255)
+mSerial.write(0)
+mSerial.write(255)
+mSerial.write(2)

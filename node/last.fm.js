@@ -46,15 +46,15 @@ serialPort.on("open", function () {
   serialPort.on('data', function(data) {
     console.log('data received: ' + data);
   });
-  serialPort.write('k', function(err, results) {
+  serialPort.write('\x6B', function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write('\x8d', function(err, results) {
+  serialPort.write('\x8D', function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write('\xff', function(err, results) {
+  serialPort.write('\xFF', function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });
@@ -62,7 +62,7 @@ serialPort.on("open", function () {
     console.log('err ' + err);
     console.log('results ' + results);
   });
-  serialPort.write('\xff', function(err, results) {
+  serialPort.write('\xFF', function(err, results) {
     console.log('err ' + err);
     console.log('results ' + results);
   });

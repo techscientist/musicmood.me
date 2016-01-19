@@ -1,5 +1,6 @@
 var fs = require('fs');
 var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var rs = require('request-promise');
 
 function slugify(text) {
@@ -19,17 +20,29 @@ function fileExists(filePath) {
     }
 }
 
+function createFolder() {
+    var dir = 'mkdir -p ../tmp';
+    var child = execSync(dir, (err, stdout, stderr) => {
+        if (err) {
+            return Promise.reject(new Error('ERROR_CREATING_FOLDER'));
+        }
+    });
+}
+
 function logBPM(filePath) {
     return new Promise((resolve, reject) => {
         if (!fileExists(filePath)) {
             reject(new Error(`File not found ${filePath}`));
             return;
         }
-        var processFile = exec(`python ../python/processor.py ${filePath}`, (err, stdout, stderr) => {
+        var processFile = exec(`python ../python/processor.py ${filePath}`, {
+            maxBuffer: 1024 * 10000
+        }, (err, stdout, stderr) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(parseFloat(stdout.replace('\n',''),10));
+                var json = JSON.parse(stdout.replace('\n', ''));
+                resolve(json);
             }
         });
     });
@@ -45,6 +58,7 @@ function downloadFile(preview_url, filePath) {
 }
 
 var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ';
+var duration = 0;
 
 module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
@@ -68,42 +82,39 @@ module.exports = {
                     data.tracks.items.forEach((item) => {
                         item.artists.forEach((artist) => {
                             if (artist.name === track.artist['#text']) {
-                                preview_url = item.preview_url
+                                preview_url = item.preview_url;
+                                duration = item.duration_ms;
                             }
                         });
                     });
                     if (preview_url) {
                         return preview_url;
                     } else {
-                        return Promise.reject(new Error('\nfile not found for processing'));
+                        return Promise.reject('NO_PREVIEW');
                     }
                 })
-                .then((preview_url) => {
-                    var dir = 'mkdir -p ../tmp';
-                    var child = exec(dir, (err, stdout, stderr) => {
-                        if (err) {
-                            throw err;
-                        }else{
-                            var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
-                            if (fileExists(filePath)) {
-                                return logBPM(filePath);
-                            } else {
-                                return downloadFile(preview_url, filePath)
-                                    .then(() => logBPM(filePath));
-                            }
-                        }
-                    })
+                .then((json) => {
+                    createFolder();
+                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
+                    if (fileExists(filePath)) {
+                        return logBPM(filePath);
+                    } else {
+                        return downloadFile(json.url, filePath)
+                            .then(() => logBPM(filePath));
+                    }
                 })
-                .then((bpm) => {
+                .then((json) => {
                     return {
                         music: track.name,
                         artist: track.artist['#text'],
                         genres: genres,
-                        bpm: bpm
+                        bpm: json.bpm,
+                        harper: json.harper,
+                        duration: duration
                     };
                 });
-        }else{
-            return Promise.reject(new Error('There`s no music.'));
+        } else {
+            return Promise.reject('NO_MUSIC');
         }
     }
 }

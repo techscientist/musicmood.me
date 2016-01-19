@@ -12,6 +12,8 @@ function processTrack(track) {
     tools.processTrack(track)
         .then((info) => {
             console.log(`\nMusic: ${info.music}\nArtist: ${info.artist}\nGenres: (${info.genres.toString()}) \nBPM: ${info.bpm}`);
+            console.log(`HarPer length: ${info.harper.length}`);
+            console.log(`Duration (MS): ${info.duration}`);
         })
         .catch((err) => {
             console.error(err);
@@ -31,7 +33,7 @@ trackStream.on('stoppedPlaying', function(track) {
 });
 
 trackStream.on('error', function(error) {
-    console.log('Error: ' + error.message);
+    console.log('Weird Error: ', error);
 });
 
 trackStream.start();

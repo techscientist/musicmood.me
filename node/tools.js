@@ -93,13 +93,13 @@ module.exports = {
                         return Promise.reject('NO_PREVIEW');
                     }
                 })
-                .then((json) => {
+                .then((preview_url) => {
                     createFolder();
                     var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
                     if (fileExists(filePath)) {
                         return logBPM(filePath);
                     } else {
-                        return downloadFile(json.url, filePath)
+                        return downloadFile(preview_url, filePath)
                             .then(() => logBPM(filePath));
                     }
                 })

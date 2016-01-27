@@ -5,10 +5,10 @@ var tools = require('./lib/tools');
 var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
 var url = require('url');
+var mongo = require('mongodb').MongoClient;
 
 var app = express();
 
-// set the view engine to use handlebars
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
@@ -35,14 +35,17 @@ var lfm = new LastfmAPI({
 });
 
 var lastfm = new LastFmNode({
-  api_key: tools.LASTFM_API_KEY,
-  secret: tools.LASTFM_API_SEC
+    api_key: tools.LASTFM_API_KEY,
+    secret: tools.LASTFM_API_SEC
 });
 
-app.get('/', function(req, res) {
-    var authUrl = lfm.getAuthenticationUrl({
-        'cb': 'http://dev.d3.do:3000/auth'
-    });
+var url_mongo = 'mongodb://localhost:27017/spotify-visualizer';
+
+var authUrl = lfm.getAuthenticationUrl({
+    'cb': 'http://dev.d3.do:3000/auth'
+});
+
+app.get('/', (req, res) => {
     res.locals = {
         title: 'Login Last.FM',
         url: authUrl
@@ -50,20 +53,83 @@ app.get('/', function(req, res) {
     res.render('index');
 });
 
-app.get('/auth', function(req, res) {
+app.get('/admin', (req, res) => {
+    mongo.connect(url_mongo, (err, db) => {
+        if (!err) {
+            var find = db.collection('users').find({}).toArray((err, items) => {
+                if (!err) {
+                    res.locals = {
+                        title: 'Update User Fields Last.FM',
+                        users: items
+                    }
+                    res.render('admin');
+                } else {
+                    console.log(err);
+                }
+            })
+        } else {
+            res.locals = {
+                title: 'Update User Fields Last.FM',
+                users: [{
+                    name: 'Not found',
+                    username: 'No one',
+                    mac_address: 'Nowhere'
+                }]
+            }
+            res.render('admin');
+        }
+    });
+});
+
+app.get('/auth', (req, res) => {
     token = url.parse(req.url, true).query.token;
     var session = lastfm.session({
         token: token,
         handlers: {
-            success: function(session) {
-                console.log(session);
+            success: (session) => {
+                mongo.connect(url_mongo, (err, db) => {
+                    if (!err) {
+                        var find = db.collection('users')
+                            .find({
+                                username: session.user
+                            })
+                            .count()
+                            .then((c) => {
+                                if (c > 0) {
+                                    console.log('user exists');
+                                    console.log(user);
+                                } else {
+                                    db.collection('users').insertOne({
+                                        token: session.key,
+                                        name: '',
+                                        username: session.user,
+                                        mac_address: '',
+                                        last_song: '',
+                                        last_genre: ''
+                                    }, (err, r) => {
+                                        console.log(err);
+                                        console.log(r);
+                                    })
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    } else {
+                        console.log(err);
+                    }
+                });
             },
-            error: function(err){
+            error: (err) => {
                 console.log(err);
             }
         }
     });
-    res.render('auth');
+    res.locals = {
+        title: 'Login Last.FM',
+        url: authUrl
+    }
+    res.render('index');
 });
 
 app.listen(3000);

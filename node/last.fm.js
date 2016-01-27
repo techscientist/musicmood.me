@@ -1,19 +1,15 @@
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
+var mongo = require('mongodb').MongoClient;
 
-var SerialPort = require("serialport").SerialPort
-var serialPort = new SerialPort("/dev/cu.usbmodem1412", {
-    baudrate: 921600
-});
-
-var lastfm = new LastFmNode({
-    api_key: tools.LASTFM_API_KEY,
-    secret: tools.LASTFM_API_SEC
-});
-
-var trackStream = lastfm.stream('chr0nu5'),
-    transfer = false;
-var harper, total, duration;
+var SerialPort = require("serialport").SerialPort,
+    lastfm = new LastFmNode({
+        api_key: tools.LASTFM_API_KEY,
+        secret: tools.LASTFM_API_SEC
+    }),
+    transfer = false,
+    url_mongo = 'mongodb://localhost:27017/spotify-visualizer',
+    serialPort, harper, total, duration;
 
 function createBuffer(list) {
     var buffer = new Buffer(list.length);
@@ -24,7 +20,7 @@ function createBuffer(list) {
 }
 
 function writeBuffer(buffer) {
-    serialPort.open(function(error) {
+    serialPort.open((error) => {
         if (error) {
             console.log('failed to open: ' + error);
         } else {
@@ -64,10 +60,33 @@ function processTrack(track) {
         });
 }
 
-trackStream.on('nowPlaying', processTrack)
-    .on('error', function(error) {
-        transfer = false;
-        console.log('Weird Error: ', error);
+function initSerial() {
+    serialPort = new SerialPort("/dev/cu.usbmodem1412", {
+        // same as the embed hardware
+        baudrate: 921600
     });
+}
 
-trackStream.start();
+function initVisualization() {
+    mongo.connect(url_mongo, (err, db) => {
+        if (!err) {
+            var find = db.collection('users')
+                .find({})
+                .forEach((element) => {
+                    console.log(element);
+                });
+        } else {
+            console.log(err);
+        }
+    });
+    // trackStream = lastfm.stream('chr0nu5');
+    // trackStream.on('nowPlaying', processTrack)
+    //     .on('error', function(error) {
+    //         transfer = false;
+    //         console.log('Weird Error: ', error);
+    //     });
+    //trackStream.start();
+}
+
+//initSerial();
+initVisualization();

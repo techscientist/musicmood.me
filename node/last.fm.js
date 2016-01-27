@@ -43,16 +43,17 @@ function equalizer() {
     }
 }
 
-function processTrack(track) {
-    tools.processTrack(track)
+function processTrack(track, user) {
+    tools.processTrack(track, user)
         .then((info) => {
             console.log(`\nMusic: ${info.music}\nArtist: ${info.artist}\nGenres: (${info.genres.toString()}) \nBPM: ${info.bpm}`);
             harper = info.harper;
             total = harper.length;
             duration = info.duration;
-            writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
-            transfer = true;
-            equalizer();
+            console.log(info.user);
+            //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
+            //transfer = true;
+            //equalizer();
         })
         .catch((err) => {
             transfer = false;
@@ -73,19 +74,18 @@ function initVisualization() {
             var find = db.collection('users')
                 .find({})
                 .forEach((element) => {
-                    console.log(element);
+                    var trackStream = lastfm.stream(element.username);
+                    trackStream.on('nowPlaying', processTrack)
+                        .on('error', function(error) {
+                            transfer = false;
+                            console.log('Weird Error: ', error);
+                        });
+                    trackStream.start();
                 });
         } else {
             console.log(err);
         }
     });
-    // trackStream = lastfm.stream('chr0nu5');
-    // trackStream.on('nowPlaying', processTrack)
-    //     .on('error', function(error) {
-    //         transfer = false;
-    //         console.log('Weird Error: ', error);
-    //     });
-    //trackStream.start();
 }
 
 //initSerial();

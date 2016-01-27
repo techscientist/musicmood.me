@@ -90,27 +90,16 @@ app.post('/update', (req, res) => {
     var mac_address = req.body.mac_address;
     var username = req.body.username;
 
-    mongo.connect(url_mongo, (err, db) => {
-        if (!err) {
-            var find = db.collection('users').updateOne({
-                "username": username
-            }, {
-                $set: {
-                    "name": name,
-                    "mac_address": mac_address
-                }
-            }, (err, results) => {
-                if (!err) {
-                    console.log(results);
-                    res.redirect('/admin');
-                } else {
-                    console.log(err);
-                    res.redirect('/admin');
-                }
-            })
-        } else {
-            res.redirect('/admin');
-        }
+    tools.updateUserInfo({
+        "username": username
+    }, {
+        "name": name,
+        "mac_address": mac_address
+    }).then((results) => {
+        res.redirect('/admin')
+    }).catch((err) => {
+        console.log(err);
+        res.redirect('/admin')
     });
 });
 
@@ -120,38 +109,12 @@ app.get('/auth', (req, res) => {
         token: token,
         handlers: {
             success: (session) => {
-                mongo.connect(url_mongo, (err, db) => {
-                    if (!err) {
-                        var find = db.collection('users')
-                            .find({
-                                username: session.user
-                            })
-                            .count()
-                            .then((c) => {
-                                if (c > 0) {
-                                    console.log('user exists');
-                                    console.log(user);
-                                } else {
-                                    db.collection('users').insertOne({
-                                        token: session.key,
-                                        name: '',
-                                        username: session.user,
-                                        mac_address: '',
-                                        last_song: '',
-                                        last_genre: ''
-                                    }, (err, r) => {
-                                        console.log(err);
-                                        console.log(r);
-                                    })
-                                }
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
-                    } else {
+                tools.newUser(session)
+                    .then((result) => {
+                        console.log(result);
+                    }).catch((err) => {
                         console.log(err);
-                    }
-                });
+                    });
             },
             error: (err) => {
                 console.log(err);

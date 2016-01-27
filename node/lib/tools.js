@@ -2,6 +2,9 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var rs = require('request-promise');
+var mongo = require('mongodb').MongoClient;
+
+var mongo_server = 'mongodb://localhost:27017/spotify-visualizer';
 
 function slugify(text) {
     return text.toString().toLowerCase()
@@ -117,5 +120,63 @@ module.exports = {
         } else {
             return Promise.reject('NO_MUSIC');
         }
+    },
+    newUser: (info) => {
+        return new Promise((resolve, reject) => {
+            mongo.connect(mongo_server, (err, db) => {
+                if (!err) {
+                    var find = db.collection('users')
+                        .find({
+                            username: info.user
+                        })
+                        .count()
+                        .then((c) => {
+                            if (c > 0) {
+                                reject('USER_EXISTS');
+                            } else {
+                                db.collection('users').insertOne({
+                                    token: info.key,
+                                    name: '',
+                                    username: info.user,
+                                    mac_address: '',
+                                    last_song: '',
+                                    last_mood: ''
+                                }, (err, r) => {
+                                    if (!err) {
+                                        resolve(r);
+                                    } else {
+                                        reject(err);
+                                    }
+                                });
+                            }
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    },
+    updateUserInfo: (who, what) => {
+        return new Promise((resolve, reject) => {
+            mongo.connect(mongo_server, (err, db) => {
+                if (!err) {
+                    var find = db.collection('users').updateOne(
+                        who, {
+                            $set: what
+                        }, (err, results) => {
+                            if (!err) {
+                                resolve(results);
+                            } else {
+                                reject(err);
+                            }
+                        })
+                } else {
+                    reject(err);
+                }
+            });
+        });
     }
 }

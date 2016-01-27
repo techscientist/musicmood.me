@@ -6,12 +6,16 @@ var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
 var url = require('url');
 var mongo = require('mongodb').MongoClient;
+var bodyParser = require('body-parser');
 
 var app = express();
 
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 var blocks = {};
 
@@ -77,6 +81,35 @@ app.get('/admin', (req, res) => {
                 }]
             }
             res.render('admin');
+        }
+    });
+});
+
+app.post('/update', (req, res) => {
+    var name = req.body.name;
+    var mac_address = req.body.mac_address;
+    var username = req.body.username;
+
+    mongo.connect(url_mongo, (err, db) => {
+        if (!err) {
+            var find = db.collection('users').updateOne({
+                "username": username
+            }, {
+                $set: {
+                    "name": name,
+                    "mac_address": mac_address
+                }
+            }, (err, results) => {
+                if (!err) {
+                    console.log(results);
+                    res.redirect('/admin');
+                } else {
+                    console.log(err);
+                    res.redirect('/admin');
+                }
+            })
+        } else {
+            res.redirect('/admin');
         }
     });
 });

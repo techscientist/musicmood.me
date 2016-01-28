@@ -50,6 +50,7 @@ function processTrack(track, user) {
             harper = info.harper;
             total = harper.length;
             duration = info.duration;
+            console.log(total, duration);
             //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
             //transfer = true;
             //equalizer();

@@ -52,6 +52,7 @@ function logBPM(filePath) {
 }
 
 function downloadFile(preview_url, filePath) {
+    console.log(preview_url);
     return new Promise((resolve, reject) => {
         rs.get(preview_url)
             .on('error', (err) => reject(err))
@@ -62,6 +63,7 @@ function downloadFile(preview_url, filePath) {
 
 var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ';
 var duration = 0;
+var fileType = 'mp3';
 
 module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
@@ -84,21 +86,37 @@ module.exports = {
                     var preview_url = undefined;
                     data.tracks.items.forEach((item) => {
                         item.artists.forEach((artist) => {
-                            if (artist.name === track.artist['#text']) {
+                            if (artist.name.toLowerCase() === track.artist['#text'].toLowerCase()) {
                                 preview_url = item.preview_url;
                                 duration = item.duration_ms;
                             }
                         });
                     });
+
                     if (preview_url) {
                         return preview_url;
                     } else {
-                        return Promise.reject('NO_PREVIEW');
+                        options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(track.name)}&entity=musicTrack`;
+                        return rs(options)
+                            .then((data) => {
+                                data.results.forEach((item) => {
+                                    if (item.artistName.toLowerCase() === track.artist['#text'].toLowerCase()) {
+                                        duration = item.trackTimeMillis;
+                                        preview_url = item.previewUrl;
+                                        fileType = 'm4a';
+                                    }
+                                });
+                                if (preview_url) {
+                                    return preview_url;
+                                } else {
+                                    return Promise.reject('NO_PREVIEW');
+                                }
+                            })
                     }
                 })
                 .then((preview_url) => {
                     createFolder();
-                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.mp3`;
+                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
                     if (fileExists(filePath)) {
                         return logBPM(filePath);
                     } else {

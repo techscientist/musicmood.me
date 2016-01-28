@@ -5,6 +5,10 @@ var rs = require('request-promise');
 var mongo = require('mongodb').MongoClient;
 
 var mongo_server = 'mongodb://localhost:27017/spotify-visualizer';
+var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ';
+var duration = 0;
+var fileType = 'mp3';
+var beats_per_second = 3;
 
 function slugify(text) {
     return text.toString().toLowerCase()
@@ -38,7 +42,7 @@ function logBPM(filePath) {
             reject(new Error(`File not found ${filePath}`));
             return;
         }
-        var processFile = exec(`python ../python/processor.py ${filePath}`, {
+        var processFile = exec(`python ../python/processor.py ${filePath} ${duration} ${beats_per_second}`, {
             maxBuffer: 1024 * 10000
         }, (err, stdout, stderr) => {
             if (err) {
@@ -60,10 +64,6 @@ function downloadFile(preview_url, filePath) {
     });
 }
 
-var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ';
-var duration = 0;
-var fileType = 'mp3';
-
 module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
@@ -81,7 +81,7 @@ module.exports = {
                         data.response.terms.forEach((item) => genres.push(item.name));
                         options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
                         return rs(options);
-                    }else{
+                    } else {
                         return Promise.reject('NO_PREVIEW');
                     }
                 })

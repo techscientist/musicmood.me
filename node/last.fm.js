@@ -46,10 +46,10 @@ function equalizer() {
 function processTrack(track, user) {
     tools.processTrack(track, user)
         .then((info) => {
-            console.log(`\nMusic: ${info.music}\nArtist: ${info.artist}\nGenres: (${info.genres.toString()}) \nBPM: ${info.bpm}`);
             harper = info.harper;
             total = harper.length;
             duration = info.duration;
+            console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration}`);
             //console.log(total, duration);
             //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
             //transfer = true;

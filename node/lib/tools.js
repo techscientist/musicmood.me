@@ -68,7 +68,7 @@ module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
     processTrack: (track, user) => {
-        if (track) {
+        if (track && !!track.name) {
             var options = {
                     uri: `http://developer.echonest.com/api/v4/artist/terms?api_key=${ECHONEST_API_KEY}&format=json&name=${encodeURIComponent(track.artist['#text'])}`,
                     json: true

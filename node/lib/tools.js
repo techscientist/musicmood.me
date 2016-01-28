@@ -52,7 +52,6 @@ function logBPM(filePath) {
 }
 
 function downloadFile(preview_url, filePath) {
-    console.log(preview_url);
     return new Promise((resolve, reject) => {
         rs.get(preview_url)
             .on('error', (err) => reject(err))
@@ -78,41 +77,54 @@ module.exports = {
                 terms;
             return rs(options)
                 .then((data) => {
-                    data.response.terms.forEach((item) => genres.push(item.name));
-                    options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
-                    return rs(options);
+                    if (!!data && !!data.response && !!data.response.terms) {
+                        data.response.terms.forEach((item) => genres.push(item.name));
+                        options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
+                        return rs(options);
+                    }else{
+                        return Promise.reject('NO_PREVIEW');
+                    }
                 })
                 .then((data) => {
                     var preview_url = undefined;
-                    data.tracks.items.forEach((item) => {
-                        item.artists.forEach((artist) => {
-                            if (artist.name.toLowerCase() === track.artist['#text'].toLowerCase()) {
-                                preview_url = item.preview_url;
-                                duration = item.duration_ms;
-                            }
-                        });
-                    });
-
-                    if (preview_url) {
-                        return preview_url;
-                    } else {
-                        options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(track.name)}&entity=musicTrack`;
-                        return rs(options)
-                            .then((data) => {
-                                data.results.forEach((item) => {
-                                    if (item.artistName.toLowerCase() === track.artist['#text'].toLowerCase()) {
-                                        duration = item.trackTimeMillis;
-                                        preview_url = item.previewUrl;
-                                        fileType = 'm4a';
-                                    }
-                                });
-                                if (preview_url) {
-                                    return preview_url;
-                                } else {
-                                    return Promise.reject('NO_PREVIEW');
+                    if (!!data && !!data.tracks && !!data.tracks.items) {
+                        data.tracks.items.forEach((item) => {
+                            item.artists.forEach((artist) => {
+                                if (artist.name.toLowerCase() === track.artist['#text'].toLowerCase()) {
+                                    preview_url = item.preview_url;
+                                    duration = item.duration_ms;
                                 }
-                            })
+                            });
+                        });
+
+                        if (preview_url) {
+                            return preview_url;
+                        } else {
+                            options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(track.name)}&entity=musicTrack`;
+                            return rs(options)
+                                .then((data) => {
+                                    if (!!data && !!data.results) {
+                                        data.results.forEach((item) => {
+                                            if (item.artistName.toLowerCase() === track.artist['#text'].toLowerCase()) {
+                                                duration = item.trackTimeMillis;
+                                                preview_url = item.previewUrl;
+                                                fileType = 'm4a';
+                                            }
+                                        });
+                                        if (preview_url) {
+                                            return preview_url;
+                                        } else {
+                                            return Promise.reject('NO_PREVIEW');
+                                        }
+                                    } else {
+                                        return Promise.reject('NO_PREVIEW');
+                                    }
+                                })
+                        }
+                    } else {
+                        return Promise.reject('NO_PREVIEW');
                     }
+
                 })
                 .then((preview_url) => {
                     createFolder();

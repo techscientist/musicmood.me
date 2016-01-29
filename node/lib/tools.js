@@ -79,11 +79,9 @@ module.exports = {
                 .then((data) => {
                     if (!!data && !!data.response && !!data.response.terms) {
                         data.response.terms.forEach((item) => genres.push(item.name));
-                        options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
-                        return rs(options);
-                    } else {
-                        return Promise.reject('NO_PREVIEW');
                     }
+                    options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
+                    return rs(options);
                 })
                 .then((data) => {
                     var preview_url = undefined;
@@ -114,15 +112,15 @@ module.exports = {
                                         if (preview_url) {
                                             return preview_url;
                                         } else {
-                                            return Promise.reject('NO_PREVIEW');
+                                            return Promise.reject('NO_PREVIEW_FROM_APPLE');
                                         }
                                     } else {
-                                        return Promise.reject('NO_PREVIEW');
+                                        return Promise.reject('NO_PREVIEW_FROM_APPLE');
                                     }
                                 })
                         }
                     } else {
-                        return Promise.reject('NO_PREVIEW');
+                        return Promise.reject('NO_PREVIEW_FROM_SPOTIFY');
                     }
 
                 })

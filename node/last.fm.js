@@ -1,15 +1,49 @@
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var mongo = require('mongodb').MongoClient;
+var beats_per_second = 4; //the same value needs to be on tools.js to sync
+var processList = {};
 
 var SerialPort = require("serialport").SerialPort,
     lastfm = new LastFmNode({
         api_key: tools.LASTFM_API_KEY,
         secret: tools.LASTFM_API_SEC
     }),
-    transfer = false,
     url_mongo = 'mongodb://localhost:27017/spotify-visualizer',
     serialPort, harper, total, duration;
+
+var ProcessUser = function(user, beats, track, harper, socketServer) {
+
+    this.user = user;
+    this.beats = beats;
+    this.track = track;
+    this.harper = harper;
+    this.socket = socketServer;
+    this.interval = undefined;
+
+    var _this = this;
+
+    this._init = () => {
+        console.log('_init', _this.user);
+        _this.interval = setInterval(() => {
+            if (_this.harper.length > 0) {
+                var eq = _this.harper[0],
+                    percent = (30 * eq / 1000).toFixed(0);
+                _this.harper.shift();
+                console.log(percent, _this.user);
+                //remove this comments to write to a serial port
+                //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, percent]));
+            } else {
+                clearInterval(_this.interval);
+            }
+        }, 1000 / _this.beats)
+    }
+    this._finish = () => {
+        console.log('_finish', _this.user);
+        clearInterval(_this.interval);
+    }
+
+}
 
 function createBuffer(list) {
     var buffer = new Buffer(list.length);
@@ -32,17 +66,6 @@ function writeBuffer(buffer) {
     });
 }
 
-function equalizer() {
-    if (transfer && harper.length > 0) {
-        var eq = harper[0],
-            percent = (30 * eq / 1000).toFixed(0);
-        harper.shift();
-        writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, percent]));
-        //console.log(percent, eq, harper.length);
-        setTimeout(equalizer, 200);
-    }
-}
-
 function processTrack(track, user) {
     tools.processTrack(track, user)
         .then((info) => {
@@ -52,8 +75,14 @@ function processTrack(track, user) {
             console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration}`);
             //console.log(total, duration);
             //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
-            //transfer = true;
             //equalizer();
+            if (user in processList) {
+                processList[user]._finish();
+                delete processList[user];
+            }
+
+            processList[user] = new ProcessUser(user, beats_per_second, track, harper, undefined);
+            processList[user]._init();
         })
         .catch((err) => {
             transfer = false;

@@ -118,7 +118,7 @@ module.exports = {
 
                                             return rs(options)
                                                 .then((data) => {
-                                                    if (!!data && !!data.response && !!data.response.songs) {
+                                                    if (!!data && !!data.response && !!data.response.songs && data.response.songs.length > 0) {
                                                         energy = data.response.songs[0].audio_summary.energy;
                                                         valence = data.response.songs[0].audio_summary.valence;
                                                     }

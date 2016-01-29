@@ -1,7 +1,19 @@
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.get('/', function(req, res) {
+    res.sendfile('views/socket.html');
+});
+
+http.listen(3030, function() {
+    console.log('listening on *:3030');
+});
+
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var mongo = require('mongodb').MongoClient;
-var beats_per_second = 4; //the same value needs to be on tools.js to sync
+var beats_per_second = 8; //the same value needs to be on tools.js to sync
 var processList = {};
 
 var SerialPort = require("serialport").SerialPort,
@@ -28,8 +40,9 @@ var ProcessUser = function(user, beats, track, harper, socketServer) {
         _this.interval = setInterval(() => {
             if (_this.harper.length > 0) {
                 var eq = _this.harper[0],
-                    percent = (30 * eq / 1000).toFixed(0);
+                    percent = (100 * eq / 1000).toFixed(0);
                 _this.harper.shift();
+                _this.socket.emit('harper',{"user":_this.user, "beat": percent, "track": _this.track.name});
                 console.log(percent, _this.user);
                 //remove this comments to write to a serial port
                 //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, percent]));
@@ -81,7 +94,7 @@ function processTrack(track, user) {
                 delete processList[user];
             }
 
-            processList[user] = new ProcessUser(user, beats_per_second, track, harper, undefined);
+            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io);
             processList[user]._init();
         })
         .catch((err) => {

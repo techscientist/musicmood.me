@@ -8,7 +8,7 @@ var mongo_server = 'mongodb://localhost:27017/spotify-visualizer';
 var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ';
 var duration = 0;
 var fileType = 'mp3';
-var beats_per_second = 4;
+var beats_per_second = 8;
 
 function slugify(text) {
     return text.toString().toLowerCase()

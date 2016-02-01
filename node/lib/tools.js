@@ -90,7 +90,6 @@ module.exports = {
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
     processTrack: (track, user) => {
         if (track && !!track.name) {
-
             return new Promise((resolve, reject) => {
                 mongo.connect(mongo_server, (err, db) => {
                     if (!err) {

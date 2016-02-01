@@ -105,4 +105,4 @@ var Moods = function() {
         return _this.moods[closest];
     }
 }
-Module.exports = Moods;
+module.exports = Moods;

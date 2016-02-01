@@ -12,9 +12,12 @@ http.listen(3030, function() {
 
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
+var Moods = require('./lib/moods');
 var mongo = require('mongodb').MongoClient;
 var beats_per_second = 8; //the same value needs to be on tools.js to sync
 var processList = {};
+
+var Moods = new Moods();
 
 var SerialPort = require("serialport").SerialPort,
     lastfm = new LastFmNode({
@@ -24,7 +27,7 @@ var SerialPort = require("serialport").SerialPort,
     url_mongo = 'mongodb://localhost:27017/spotify-visualizer',
     serialPort, harper, total, duration;
 
-var ProcessUser = function(user, beats, track, harper, socketServer) {
+var ProcessUser = function(user, beats, track, harper, socketServer, mood) {
 
     this.user = user;
     this.beats = beats;
@@ -37,6 +40,7 @@ var ProcessUser = function(user, beats, track, harper, socketServer) {
 
     this._init = () => {
         console.log('_init', _this.user);
+        console.log(Moods.NearestFeeling(mood));
         _this.interval = setInterval(() => {
             if (_this.harper.length > 0) {
                 var eq = _this.harper[0],
@@ -91,12 +95,18 @@ function processTrack(track, user) {
             console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
             //console.log(total, duration);
             //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
+            //init
+            // 0x6B 0x8D
+            // change color
+            // 0xCC (index profile) (index color)
+            // change amplitude
+            // 0xCA [n values]
             if (user in processList) {
                 processList[user]._finish();
                 delete processList[user];
             }
 
-            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io);
+            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io, {"energy": info.energy, "valence": info.valence});
             processList[user]._init();
         })
         .catch((err) => {

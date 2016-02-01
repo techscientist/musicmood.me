@@ -99,7 +99,15 @@ module.exports = {
                             })
                             .toArray((err, items) => {
                                 if (items.length > 0) {
-                                    resolve(items[0]);
+                                    // TODO
+                                    // GMT -3 ?
+                                    var now = parseInt(Date.now() / 1000);
+                                    var uts = parseInt(track.date.uts) + parseInt(items[0].duration / 1000);
+                                    if (uts > now) {
+                                        resolve(items[0]);
+                                    } else {
+                                        reject('OLD_SONG');
+                                    }
                                 } else {
                                     var options = {
                                             uri: `http://developer.echonest.com/api/v4/artist/terms?api_key=${ECHONEST_API_KEY}&format=json&name=${encodeURIComponent(track.artist['#text'])}`,
@@ -167,13 +175,21 @@ module.exports = {
 
                                         })
                                         .then((preview_url) => {
-                                            createFolder();
-                                            var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
-                                            if (fileExists(filePath)) {
-                                                return logBPM(filePath);
+                                            // TODO
+                                            // GMT -3 ?
+                                            var now = parseInt(Date.now() / 1000);
+                                            var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                            if (uts > now) {
+                                                createFolder();
+                                                var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
+                                                if (fileExists(filePath)) {
+                                                    return logBPM(filePath);
+                                                } else {
+                                                    return downloadFile(preview_url, filePath)
+                                                        .then(() => logBPM(filePath));
+                                                }
                                             } else {
-                                                return downloadFile(preview_url, filePath)
-                                                    .then(() => logBPM(filePath));
+                                                reject('OLD_SONG');
                                             }
                                         })
                                         .then((json) => {

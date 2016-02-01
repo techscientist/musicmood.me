@@ -42,7 +42,10 @@ var ProcessUser = function(user, beats, track, harper, socketServer) {
                 var eq = _this.harper[0],
                     percent = (100 * eq / 1000).toFixed(0);
                 _this.harper.shift();
-                _this.socket.emit('harper',{"user":_this.user, "beat": percent, "track": _this.track.name});
+                _this.socket.emit('harper', {
+                    "user": _this.user,
+                    "beat": percent
+                });
                 //console.log(percent, _this.user);
                 //remove this comments to write to a serial port
                 //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, percent]));
@@ -88,7 +91,6 @@ function processTrack(track, user) {
             console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
             //console.log(total, duration);
             //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
-            //equalizer();
             if (user in processList) {
                 processList[user]._finish();
                 delete processList[user];

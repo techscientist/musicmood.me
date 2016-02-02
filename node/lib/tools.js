@@ -184,39 +184,43 @@ module.exports = {
                                                                 if (preview_url) {
                                                                     return preview_url;
                                                                 } else {
-                                                                    return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
+                                                                    reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
                                                                 }
                                                             } else {
-                                                                return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
+                                                                reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
                                                             }
                                                         })
                                                 }
                                             } else {
-                                                return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
+                                                reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
 
                                         })
                                         .then((preview_url) => {
-                                            // TODO
-                                            // GMT -3 ?
-                                            var now = 0;
-                                            var uts = 1;
-                                            if (!!track.date) {
-                                                var now = parseInt(Date.now() / 1000);
-                                                var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
-                                            }
-
-                                            if (uts > now) {
-                                                createFolder();
-                                                var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
-                                                if (fileExists(filePath)) {
-                                                    return logBPM(filePath);
-                                                } else {
-                                                    return downloadFile(preview_url, filePath)
-                                                        .then(() => logBPM(filePath));
+                                            if (preview_url) {
+                                                // TODO
+                                                // GMT -3 ?
+                                                var now = 0;
+                                                var uts = 1;
+                                                if (!!track.date) {
+                                                    var now = parseInt(Date.now() / 1000);
+                                                    var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
                                                 }
-                                            } else {
-                                                return reject('\n' + user + ': OLD_SONG');
+
+                                                if (uts > now) {
+                                                    createFolder();
+                                                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
+                                                    if (fileExists(filePath)) {
+                                                        return logBPM(filePath);
+                                                    } else {
+                                                        return downloadFile(preview_url, filePath)
+                                                            .then(() => logBPM(filePath));
+                                                    }
+                                                } else {
+                                                    return reject('\n' + user + ': OLD_SONG');
+                                                }
+                                            }else{
+                                                reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
                                         })
                                         .then((json) => {
@@ -312,8 +316,11 @@ module.exports = {
         });
     },
     logger: (string) => {
-        fs.appendFile('../tmp/log.txt', string, encoding='utf8', (err) => {
-            console.log(err);
+        var now = new Date();
+            fs.appendFile('../tmp/log.txt', `\n${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()} ${string}`, encoding='utf8', (err) => {
+            if (err) {
+                console.log(err);
+            }
         });
     }
 }

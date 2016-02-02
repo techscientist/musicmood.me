@@ -1,6 +1,10 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var LastFmNode = require('lastfm').LastFmNode;
+var tools = require('./lib/tools');
+var Moods = require('./lib/moods');
+var mongo = require('mongodb').MongoClient;
 
 app.get('/', function(req, res) {
     res.sendfile('views/socket.html');
@@ -10,10 +14,7 @@ http.listen(3030, function() {
     console.log('listening on *:3030');
 });
 
-var LastFmNode = require('lastfm').LastFmNode;
-var tools = require('./lib/tools');
-var Moods = require('./lib/moods');
-var mongo = require('mongodb').MongoClient;
+
 var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var processList = {};
 

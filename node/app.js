@@ -45,11 +45,10 @@ var lastfm = new LastFmNode({
 
 var url_mongo = 'mongodb://localhost:27017/spotify-visualizer';
 
-var authUrl = lfm.getAuthenticationUrl({
-    'cb': 'http://dev.d3.do:3000/auth'
-});
-
 app.get('/', (req, res) => {
+    var authUrl = lfm.getAuthenticationUrl({
+        'cb': req.protocol + '://' + req.get('host') + req.originalUrl
+    });
     res.locals = {
         title: 'Login Last.FM',
         url: authUrl
@@ -121,11 +120,7 @@ app.get('/auth', (req, res) => {
             }
         }
     });
-    res.locals = {
-        title: 'Login Last.FM',
-        url: authUrl
-    }
-    res.render('index');
+    res.redirect('/');
 });
 
 app.listen(3000);

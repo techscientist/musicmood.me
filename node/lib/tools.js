@@ -101,12 +101,16 @@ module.exports = {
                                 if (items.length > 0) {
                                     // TODO
                                     // GMT -3 ?
-                                    var now = parseInt(Date.now() / 1000);
-                                    var uts = parseInt(track.date.uts) + parseInt(items[0].duration / 1000);
+                                    var now = 0;
+                                    var uts = 1;
+                                    if (!!track.date) {
+                                        var now = parseInt(Date.now() / 1000);
+                                        var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                    }
                                     if (uts > now) {
                                         resolve(items[0]);
                                     } else {
-                                        reject('OLD_SONG');
+                                        reject('\n' + user + ': OLD_SONG');
                                     }
                                 } else {
                                     var options = {
@@ -162,23 +166,28 @@ module.exports = {
                                                                 if (preview_url) {
                                                                     return preview_url;
                                                                 } else {
-                                                                    return Promise.reject('NO_PREVIEW_FROM_APPLE');
+                                                                    return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
                                                                 }
                                                             } else {
-                                                                return Promise.reject('NO_PREVIEW_FROM_APPLE');
+                                                                return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
                                                             }
                                                         })
                                                 }
                                             } else {
-                                                return Promise.reject('NO_PREVIEW_FROM_SPOTIFY');
+                                                return Promise.reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
 
                                         })
                                         .then((preview_url) => {
                                             // TODO
                                             // GMT -3 ?
-                                            var now = parseInt(Date.now() / 1000);
-                                            var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                            var now = 0;
+                                            var uts = 1;
+                                            if (!!track.date) {
+                                                var now = parseInt(Date.now() / 1000);
+                                                var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                            }
+
                                             if (uts > now) {
                                                 createFolder();
                                                 var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
@@ -189,7 +198,7 @@ module.exports = {
                                                         .then(() => logBPM(filePath));
                                                 }
                                             } else {
-                                                reject('OLD_SONG');
+                                                reject('\n' + user + ': OLD_SONG');
                                             }
                                         })
                                         .then((json) => {
@@ -213,12 +222,12 @@ module.exports = {
                                 }
                             });
                     } else {
-                        reject(err);
+                        reject('\n' + user + ': ' + err);
                     }
                 });
             })
         } else {
-            return Promise.reject('NO_MUSIC');
+            return Promise.reject('\n' + user + ': NO_MUSIC');
         }
     },
     newUser: (info) => {

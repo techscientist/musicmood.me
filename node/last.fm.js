@@ -93,9 +93,8 @@ function processTrack(track, user) {
             total = harper.length;
             duration = info.duration;
             console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
-            //console.log(total, duration);
-            //writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
-            //init
+            // writeBuffer(createBuffer([0x6B, 0x8D, 255, 0, 0, 5]));
+            // init
             // 0x6B 0x8D
             // change color
             // 0xCC (index profile) (index color)

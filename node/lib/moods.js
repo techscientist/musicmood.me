@@ -8,7 +8,7 @@ var Mood = function(mood, energy, valence, color) {
 var Moods = function() {
     var _this = this;
     this.moods = [
-        new Mood("neutral", 0, 0, [255, 255, 255]),
+        new Mood("neutral", 0, 0, [0, 0, 0]),
         new Mood("energetic", 0.98, 0.5, [253, 161, 51]),
         new Mood("poignant", 0.95, 0.35, [252, 77, 34]),
         new Mood("intense", 0.925, 0.45, [253, 131, 44]),

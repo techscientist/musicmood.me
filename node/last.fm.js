@@ -14,7 +14,7 @@ var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var Moods = require('./lib/moods');
 var mongo = require('mongodb').MongoClient;
-var beats_per_second = 8; //the same value needs to be on tools.js to sync
+var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var processList = {};
 
 var Moods = new Moods();
@@ -48,7 +48,8 @@ var ProcessUser = function(user, beats, track, harper, socketServer, mood) {
                 _this.harper.shift();
                 _this.socket.emit('harper', {
                     "user": _this.user,
-                    "beat": percent
+                    "beat": percent,
+                    "color": Moods.NearestFeeling(mood).color
                 });
                 //console.log(percent, _this.user);
                 //remove this comments to write to a serial port
@@ -105,7 +106,10 @@ function processTrack(track, user) {
                 delete processList[user];
             }
 
-            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io, {"energy": info.energy, "valence": info.valence});
+            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io, {
+                "energy": info.energy,
+                "valence": info.valence
+            });
             processList[user]._init();
         })
         .catch((err) => {

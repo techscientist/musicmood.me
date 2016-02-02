@@ -8,7 +8,7 @@ var mongo_server = 'mongodb://localhost:27017/spotify-visualizer',
     ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
     duration = 0,
     fileType = 'mp3',
-    beats_per_second = 8,
+    beats_per_second = 20,
     energy = 0,
     valence = 0;
 
@@ -88,6 +88,7 @@ function createTrack(info) {
 module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
+    BEATS_PER_SECOND: beats_per_second,
     processTrack: (track, user) => {
         if (track && !!track.name) {
             return new Promise((resolve, reject) => {
@@ -95,7 +96,8 @@ module.exports = {
                     if (!err) {
                         var find = db.collection('songs')
                             .find({
-                                slug: slugify(track.artist['#text'] + '-' + track.name)
+                                slug: slugify(track.artist['#text'] + '-' + track.name),
+                                beats_per_second: beats_per_second
                             })
                             .toArray((err, items) => {
                                 if (items.length > 0) {
@@ -142,7 +144,15 @@ module.exports = {
                                             if (!!data && !!data.tracks && !!data.tracks.items) {
                                                 data.tracks.items.forEach((item) => {
                                                     item.artists.forEach((artist) => {
-                                                        if (artist.name.toLowerCase() === track.artist['#text'].toLowerCase()) {
+                                                        var current_name = artist.name.toLowerCase().trim();
+                                                        var playing_name = track.artist['#text'].toLowerCase().trim();
+                                                        if (current_name.substring(0,3) === "the") {
+                                                            current_name = current_name.substring(3).trim();
+                                                        }
+                                                        if (playing_name.substring(0,3) === "the") {
+                                                            current_name = playing_name.substring(3).trim();
+                                                        }
+                                                        if (current_name === playing_name) {
                                                             preview_url = item.preview_url;
                                                             duration = item.duration_ms;
                                                         }
@@ -157,7 +167,15 @@ module.exports = {
                                                         .then((data) => {
                                                             if (!!data && !!data.results) {
                                                                 data.results.forEach((item) => {
-                                                                    if (item.artistName.toLowerCase() === track.artist['#text'].toLowerCase()) {
+                                                                    var current_name = item.artistName.toLowerCase().trim();
+                                                                    var playing_name = track.artist['#text'].toLowerCase().trim();
+                                                                    if (current_name.substring(0,3) === "the") {
+                                                                        current_name = current_name.substring(3).trim();
+                                                                    }
+                                                                    if (playing_name.substring(0,3) === "the") {
+                                                                        current_name = playing_name.substring(3).trim();
+                                                                    }
+                                                                    if (current_name === playing_name) {
                                                                         duration = item.trackTimeMillis;
                                                                         preview_url = item.previewUrl;
                                                                         fileType = 'm4a';
@@ -198,26 +216,31 @@ module.exports = {
                                                         .then(() => logBPM(filePath));
                                                 }
                                             } else {
-                                                reject('\n' + user + ': OLD_SONG');
+                                                return reject('\n' + user + ': OLD_SONG');
                                             }
                                         })
                                         .then((json) => {
-                                            var info = {
-                                                slug: slugify(track.artist['#text'] + '-' + track.name),
-                                                music: track.name,
-                                                artist: track.artist['#text'],
-                                                genres: genres,
-                                                bpm: json.bpm,
-                                                harper: json.harper,
-                                                duration: duration,
-                                                energy: energy,
-                                                valence: valence,
-                                                user: user
+                                            if (json) {
+                                                var info = {
+                                                    slug: slugify(track.artist['#text'] + '-' + track.name),
+                                                    music: track.name,
+                                                    artist: track.artist['#text'],
+                                                    genres: genres,
+                                                    bpm: json.bpm,
+                                                    harper: json.harper,
+                                                    duration: duration,
+                                                    energy: energy,
+                                                    valence: valence,
+                                                    user: user,
+                                                    beats_per_second: beats_per_second
+                                                }
+                                                createTrack(info)
+                                                    .then((info) => {
+                                                        resolve(info);
+                                                    });
+                                            }else{
+                                                return reject('\n' + user + ': NO_JSON');
                                             }
-                                            createTrack(info)
-                                                .then((info) => {
-                                                    resolve(info);
-                                                });
                                         });
                                 }
                             });

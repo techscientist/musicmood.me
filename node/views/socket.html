@@ -9,14 +9,14 @@
 <body>
 
     <img src="http://img2-ak.lst.fm/i/u/avatar170s/517efb113045eb6b12e5f6e9487dd156.png" />
-    <div id="bar"><div class="slide"></div></div>
+    <div id="bar"><div id="slide"></div></div>
 
     <style>
         body {
             padding: 0px;
             margin: 0px;
         }
-        .slide{
+        #slide{
             width:170px;
             height:10px;
             background: #19ff00;
@@ -43,6 +43,7 @@
             if (msg.user == 'chr0nu5') {
                 var percent = 170 * msg.beat / 100;
                 document.getElementById('bar').style.width = percent + "px";
+                document.getElementById('slide').style.background = "rgb("+msg.color+")";
             }
         });
     </script>

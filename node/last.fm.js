@@ -131,7 +131,13 @@ function initSerial() {
             console.log(`\n${port.comName}, ${port.pnpId}, ${port.manufacturer}`);
         });
     });
-    serialPort = new SerialPort.SerialPort("/dev/cu.usbmodem1412", {
+    var os = require("os").hostname();
+    var port = "/dev/ttyACM0"
+    // add more cases
+    if (os === "Elliot-Alderson.local") {
+        port = "/dev/cu.usbmodem1412"
+    }
+    serialPort = new SerialPort.SerialPort(port, {
             // same as the embed hardware
             baudrate: 921600
         })

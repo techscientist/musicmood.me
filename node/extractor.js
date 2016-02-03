@@ -49,7 +49,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             i: _this.index,
             p: 0
         })
-        _this.interval = setInterval(() => {
+        _this.repeat = function() {
             if (_this.harper.length > 0) {
                 var eq = _this.harper[0],
                     percent = (100 * eq / 1000).toFixed(0),
@@ -64,15 +64,16 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
                     a: percent,
                     i: _this.index,
                     p: 0
-                })
+                });
+                _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
             } else {
-                clearInterval(_this.interval);
+                clearTimeout(_this.interval);
             }
-        }, 1000 / _this.beats)
+        }
+        _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
     }
     this._finish = () => {
         console.log('_finish', _this.user);
-        clearInterval(_this.interval);
     }
 
 }

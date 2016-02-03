@@ -9,6 +9,7 @@ var serial_enabled = true;
 var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var serialPort;
 var buffer = undefined;
+var cache_buffer = undefined;
 var QUEUE = [];
 var timer = undefined;
 
@@ -21,31 +22,37 @@ function createBuffer(list) {
 }
 
 function writeBuffer(tmp_buffer) {
-    serialPort.open((error) => {
-        if (error) {
-            console.log('failed to open: ' + error);
-        } else {
-            serialPort.write(tmp_buffer, (err, results) => {
-                if (err) {
-                    console.log(`serial error: ${err}`);
-                }
-                serialPort.close();
-            });
-        }
-    });
+    if (serialPort.isOpen()) {
+        serialPort.write(tmp_buffer, (err, results) => {
+            if (err) {
+                console.log(`serial error: ${err}`);
+            }
+        });
+    } else {
+        serialPort.open((error) => {
+            if (error) {
+                console.log('failed to open: ' + error);
+            }
+        });
+    }
 }
 
-client.once('connect', function() {
-    console.log('Client: Connected to port 3030');
-    client.on('queue', function(msg) {
+client.on('connect', function() {
+        console.log('Connected to port 3030');
+        timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
+    })
+    .on('disconnect', function() {
+        console.log('Disconnected from port 3030');
+        clearTimeout(timer);
+    })
+    .on('queue', function(msg) {
         QUEUE.push(msg);
     });
-});
 
 function SerialWrite() {
     //console.log(QUEUE.length);
     var tmp_buffer = [];
-    var AMPS = new Array(30+1).join('0').split('').map(parseFloat);
+    var AMPS = new Array(30 + 1).join('0').split('').map(parseFloat);
     tmp_buffer.push(0x6B);
     tmp_buffer.push(0xBD);
     var color = undefined;
@@ -56,15 +63,15 @@ function SerialWrite() {
         }
     });
     if (color) {
-        tmp_buffer.push(0xCC);
+        //tmp_buffer.push(0xCC);
         tmp_buffer.push(color.i);
         tmp_buffer.push(color.c);
-    }else{
-        tmp_buffer.push(0xCC);
-        tmp_buffer.push(AMPS.length+1);
+    } else {
+        //tmp_buffer.push(0xCC);
+        tmp_buffer.push(AMPS.length + 1);
         tmp_buffer.push(0);
     }
-    tmp_buffer.push(0xCA);
+    //tmp_buffer.push(0xCA);
     QUEUE.forEach((item, index) => {
         if ('a' in item) {
             AMPS[item.i] = parseInt(item.a);
@@ -84,6 +91,7 @@ function SerialWrite() {
         writeBuffer(buffer);
     }
     tools.logger(buffer);
+    timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
 }
 
 function initSerial() {
@@ -108,7 +116,6 @@ function initSerial() {
             }
             serial_enabled = false;
         });
-    timer = setInterval(SerialWrite, 900/tools.BEATS_PER_SECOND);
 }
 
 initSerial();

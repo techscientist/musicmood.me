@@ -27,6 +27,7 @@ function writeBuffer(tmp_buffer) {
             if (err) {
                 console.log(`serial error: ${err}`);
             }
+            tools.logger(buffer);
         });
     } else {
         if (serial_enabled) {

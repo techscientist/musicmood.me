@@ -93,8 +93,10 @@ function processTrack(track, user) {
                             username: user
                         }, (err, item) => {
                             if (user in processList) {
-                                processList[user]._finish();
-                                delete processList[user];
+                                if (processList[user].track.name !== track.name) {
+                                    processList[user]._finish();
+                                    delete processList[user];
+                                }
                             }
                             processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
                                 "energy": info.energy,

@@ -109,7 +109,9 @@ function processTrack(track, user) {
         })
         .catch((err) => {
             transfer = false;
-            console.error(err);
+            processList[user]._finish();
+            delete processList[user];
+            console.error(`${err}`);
         });
 }
 

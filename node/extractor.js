@@ -5,7 +5,6 @@ var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var Moods = require('./lib/moods');
 var mongo = require('mongodb').MongoClient;
-var serial_enabled = true;
 
 app.get('/', function(req, res) {
     res.sendfile('views/socket.html');
@@ -21,49 +20,35 @@ var processList = {};
 
 var Moods = new Moods();
 
-var SerialPort = require("serialport"),
-    lastfm = new LastFmNode({
+var lastfm = new LastFmNode({
         api_key: tools.LASTFM_API_KEY,
         secret: tools.LASTFM_API_SEC
     }),
     url_mongo = 'mongodb://localhost:27017/spotify-visualizer',
-    serialPort, harper, total, duration;
+    harper, total, duration;
 
-function createBuffer(list) {
-    var buffer = new Buffer(list.length);
-    list.forEach((item, index) => {
-        buffer[index] = item
-    });
-    return buffer;
-}
-
-function writeBuffer(buffer) {
-    serialPort.open((error) => {
-        if (error) {
-            console.log('failed to open: ' + error);
-        } else {
-            serialPort.write(buffer, (err, results) => {
-                //console.log('err ' + err);
-                //console.log('results ' + results);
-            });
-        }
-    });
-}
-
-var ProcessUser = function(user, beats, track, harper, socketServer, mood) {
+var ProcessUser = function(user, index, beats, track, harper, socketServer, mood) {
 
     this.user = user;
+    this.index = index;
     this.beats = beats;
     this.track = track;
     this.harper = harper;
     this.socket = socketServer;
     this.interval = undefined;
+    this.mood = mood;
 
     var _this = this;
 
     this._init = () => {
         console.log('_init', _this.user);
-        console.log(Moods.NearestFeeling(mood));
+        var mood = Moods.NearestFeeling(_this.mood);
+        //send a change color to the queue
+        _this.socket.emit('queue', {
+            c: mood.colorIndex,
+            i: _this.index,
+            p: 0
+        })
         _this.interval = setInterval(() => {
             if (_this.harper.length > 0) {
                 var eq = _this.harper[0],
@@ -73,22 +58,13 @@ var ProcessUser = function(user, beats, track, harper, socketServer, mood) {
                 _this.socket.emit('harper', {
                     "user": _this.user,
                     "beat": percent,
-                    "color": Moods.NearestFeeling(mood).color
+                    "color": Moods.NearestFeeling(_this.mood).color
                 });
-                buffer = createBuffer([0x6B, 0x8D, 255, 0, 0, 5]);
-                if (serial_enabled) {
-                    writeBuffer(buffer);
-                    // init
-                    // 0x6B 0x8D
-                    // change color
-                    // 0xCC (index profile) (index color)
-                    // change amplitude
-                    // 0xCA [n values]
-                    tools.logger(`[s] user: ${_this.user}   ${buffer}`);
-                } else {
-                    tools.logger(`[l] user: ${_this.user}   ${buffer}`);
-                }
-
+                _this.socket.emit('queue', {
+                    a: percent,
+                    i: _this.index,
+                    p: 0
+                })
             } else {
                 clearInterval(_this.interval);
             }
@@ -107,42 +83,33 @@ function processTrack(track, user) {
             harper = info.harper;
             total = harper.length;
             duration = info.duration;
-            console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
+            //console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
 
-            if (user in processList) {
-                processList[user]._finish();
-                delete processList[user];
-            }
-            processList[user] = new ProcessUser(user, beats_per_second, track, harper, io, {
-                "energy": info.energy,
-                "valence": info.valence
+            mongo.connect(url_mongo, (err, db) => {
+                if (!err) {
+                    var find = db.collection('users')
+                        .findOne({
+                            username: user
+                        }, (err, item) => {
+                            if (user in processList) {
+                                processList[user]._finish();
+                                delete processList[user];
+                            }
+                            processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
+                                "energy": info.energy,
+                                "valence": info.valence
+                            });
+                            processList[user]._init();
+                        })
+                } else {
+                    console.log(err);
+                }
             });
-            processList[user]._init();
+
         })
         .catch((err) => {
             transfer = false;
             console.error(err);
-        });
-}
-
-function initSerial() {
-    SerialPort.list(function(err, ports) {
-        ports.forEach(function(port) {
-            console.log(`\n${port.comName}, ${port.pnpId}, ${port.manufacturer}`);
-        });
-    });
-    var os = require("os").hostname();
-    var port = "/dev/ttyACM0"
-    // add more cases
-    if (os === "Elliot-Alderson.local") {
-        port = "/dev/cu.usbmodem1412"
-    }
-    serialPort = new SerialPort.SerialPort(port, {
-            // same as the embed hardware
-            baudrate: 921600
-        })
-        .on('error', (err) => {
-            serial_enabled = false;
         });
 }
 
@@ -166,5 +133,4 @@ function initVisualization() {
     });
 }
 
-initSerial();
 initVisualization();

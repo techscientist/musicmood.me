@@ -146,10 +146,10 @@ module.exports = {
                                                     item.artists.forEach((artist) => {
                                                         var current_name = artist.name.toLowerCase().trim();
                                                         var playing_name = track.artist['#text'].toLowerCase().trim();
-                                                        if (current_name.substring(0,3) === "the") {
+                                                        if (current_name.substring(0, 3) === "the") {
                                                             current_name = current_name.substring(3).trim();
                                                         }
-                                                        if (playing_name.substring(0,3) === "the") {
+                                                        if (playing_name.substring(0, 3) === "the") {
                                                             current_name = playing_name.substring(3).trim();
                                                         }
                                                         if (current_name === playing_name) {
@@ -169,10 +169,10 @@ module.exports = {
                                                                 data.results.forEach((item) => {
                                                                     var current_name = item.artistName.toLowerCase().trim();
                                                                     var playing_name = track.artist['#text'].toLowerCase().trim();
-                                                                    if (current_name.substring(0,3) === "the") {
+                                                                    if (current_name.substring(0, 3) === "the") {
                                                                         current_name = current_name.substring(3).trim();
                                                                     }
-                                                                    if (playing_name.substring(0,3) === "the") {
+                                                                    if (playing_name.substring(0, 3) === "the") {
                                                                         current_name = playing_name.substring(3).trim();
                                                                     }
                                                                     if (current_name === playing_name) {
@@ -219,7 +219,7 @@ module.exports = {
                                                 } else {
                                                     return reject('\n' + user + ': OLD_SONG');
                                                 }
-                                            }else{
+                                            } else {
                                                 reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
                                         })
@@ -242,7 +242,7 @@ module.exports = {
                                                     .then((info) => {
                                                         resolve(info);
                                                     });
-                                            }else{
+                                            } else {
                                                 return reject('\n' + user + ': NO_JSON');
                                             }
                                         });
@@ -317,7 +317,7 @@ module.exports = {
     },
     logger: (string) => {
         var now = new Date();
-            fs.appendFile('../tmp/log.txt', `\n${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()} ${string}`, encoding='utf8', (err) => {
+        fs.appendFile('../tmp/log.txt', `\n${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()} ${string}`, encoding = 'utf8', (err) => {
             if (err) {
                 console.log(err);
             }

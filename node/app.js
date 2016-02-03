@@ -47,7 +47,7 @@ var url_mongo = 'mongodb://localhost:27017/spotify-visualizer';
 
 app.get('/', (req, res) => {
     var authUrl = lfm.getAuthenticationUrl({
-        'cb': req.protocol + '://' + req.get('host') + req.originalUrl
+        'cb': req.protocol + '://' + req.get('host') + '/auth'
     });
     res.locals = {
         title: 'Login Last.FM',
@@ -108,11 +108,14 @@ app.get('/auth', (req, res) => {
         token: token,
         handlers: {
             success: (session) => {
+                console.log(session);
                 tools.newUser(session)
                     .then((result) => {
                         console.log(result);
+                        res.redirect('/');
                     }).catch((err) => {
                         console.log(err);
+                        res.redirect('/');
                     });
             },
             error: (err) => {
@@ -120,7 +123,6 @@ app.get('/auth', (req, res) => {
             }
         }
     });
-    res.redirect('/');
 });
 
 app.listen(3000);

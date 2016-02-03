@@ -81,10 +81,8 @@ function SerialWrite() {
     buffer = createBuffer(tmp_buffer);
     if (serial_enabled) {
         writeBuffer(buffer);
-    } else {
-        console.log(buffer);
     }
-    tools.logger(`BUFFER ${buffer}`);
+    tools.logger(buffer);
 }
 
 function initSerial() {

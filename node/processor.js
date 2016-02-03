@@ -1,5 +1,5 @@
 var ioc = require('socket.io-client');
-var client = ioc.connect("http://localhost:3030");
+var client = ioc.connect("http://10.0.1.42:3030");
 
 var tools = require('./lib/tools');
 var SerialPort = require("serialport");
@@ -29,6 +29,7 @@ function writeBuffer(tmp_buffer) {
                 if (err) {
                     console.log(`serial error: ${err}`);
                 }
+                serialPort.close();
             });
         }
     });

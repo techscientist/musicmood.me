@@ -53,6 +53,11 @@ client.on('connect', function() {
     })
     .on('queue', function(msg) {
         QUEUE.push(msg);
+    })
+    .on('finish', function(msg) {
+        QUEUE = QUEUE.filter((item) => {
+            return item.u !== msg.u;
+        });
     });
 
 function SerialWrite() {

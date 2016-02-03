@@ -63,7 +63,8 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
                 _this.socket.emit('queue', {
                     a: percent,
                     i: _this.index,
-                    p: 0
+                    p: 0,
+                    u: user
                 });
                 _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
             } else {
@@ -73,6 +74,9 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
         _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
     }
     this._finish = () => {
+        _this.socket.emit('finish', {
+            u: user
+        });
         console.log('_finish', _this.user);
     }
 

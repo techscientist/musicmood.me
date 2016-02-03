@@ -316,11 +316,12 @@ module.exports = {
         });
     },
     logger: (string) => {
-        var now = new Date();
-        fs.appendFile('../tmp/log.txt', `\n${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()} ${string}`, encoding = 'utf8', (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
+        // var now = new Date();
+        // fs.appendFile('../tmp/log.txt', `\n${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()} ${string}`, encoding = 'utf8', (err) => {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        //     fs.close();
+        // });
     }
 }

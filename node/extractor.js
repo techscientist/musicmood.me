@@ -41,7 +41,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
     var _this = this;
 
     this._init = () => {
-        console.log('_init', _this.user);
+        console.log('_init', _this.user, `(${_this.track.artist['#text']} - ${_this.track.name})`);
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {

@@ -107,7 +107,7 @@ module.exports = {
                                     var uts = 1;
                                     if (!!track.date) {
                                         var now = parseInt(Date.now() / 1000);
-                                        var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                        var uts = parseInt(track.date.uts) + parseInt(duration*2 / 1000);
                                     }
                                     if (uts > now) {
                                         resolve(items[0]);
@@ -204,7 +204,7 @@ module.exports = {
                                                 var uts = 1;
                                                 if (!!track.date) {
                                                     var now = parseInt(Date.now() / 1000);
-                                                    var uts = parseInt(track.date.uts) + parseInt(duration / 1000);
+                                                    var uts = parseInt(track.date.uts) + parseInt(duration*2 / 1000);
                                                 }
 
                                                 if (uts > now) {

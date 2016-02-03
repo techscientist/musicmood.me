@@ -58,7 +58,7 @@ client.on('connect', function() {
 function SerialWrite() {
     //console.log(QUEUE.length);
     var tmp_buffer = [];
-    var AMPS = new Array(30 + 1).join('0').split('').map(parseFloat);
+    var AMPS = new Array(24 + 1).join('0').split('').map(parseFloat);
     tmp_buffer.push(0x6B);
     tmp_buffer.push(0xBD);
     var color = undefined;

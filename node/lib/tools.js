@@ -8,7 +8,7 @@ var mongo_server = 'mongodb://localhost:27017/spotify-visualizer',
     ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
     duration = 0,
     fileType = 'mp3',
-    beats_per_second = 10,
+    beats_per_second = 50,
     energy = 0,
     valence = 0;
 

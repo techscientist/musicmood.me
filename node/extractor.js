@@ -103,7 +103,8 @@ function processTrack(track, user) {
                                 });
                                 processList[user]._init();
                             }
-                        })
+                            db.close();
+                        });
                 } else {
                     console.log(err);
                 }
@@ -131,6 +132,7 @@ function initVisualization() {
                             console.log('Weird Error: ', error);
                         });
                     trackStream.start();
+                    db.close();
                 });
         } else {
             console.log(err);

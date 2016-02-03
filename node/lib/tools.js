@@ -77,6 +77,7 @@ function createTrack(info) {
                     } else {
                         reject(err);
                     }
+                    db.close();
                 });
             } else {
                 reject(err);
@@ -89,6 +90,7 @@ module.exports = {
     LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
     BEATS_PER_SECOND: beats_per_second,
+    MONGO_SERVER: mongo_server,
     processTrack: (track, user) => {
         if (track && !!track.name) {
             return new Promise((resolve, reject) => {
@@ -230,6 +232,7 @@ module.exports = {
                                             }
                                         });
                                 }
+                                db.close();
                             });
                     } else {
                         reject('\n' + user + ': ' + err);
@@ -251,6 +254,7 @@ module.exports = {
                         .count()
                         .then((c) => {
                             if (c > 0) {
+                                db.close();
                                 reject('USER_EXISTS');
                             } else {
                                 db.collection('users').insertOne({
@@ -261,6 +265,7 @@ module.exports = {
                                     last_song: '',
                                     last_mood: ''
                                 }, (err, r) => {
+                                    db.close();
                                     if (!err) {
                                         resolve(r);
                                     } else {
@@ -286,6 +291,7 @@ module.exports = {
                         who, {
                             $set: what
                         }, (err, results) => {
+                            db.close();
                             if (!err) {
                                 resolve(results);
                             } else {

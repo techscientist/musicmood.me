@@ -60,7 +60,7 @@ function SerialWrite() {
     var tmp_buffer = [];
     var AMPS = new Array(24 + 1).join('0').split('').map(parseFloat);
     tmp_buffer.push(0x6B);
-    tmp_buffer.push(0xBD);
+    tmp_buffer.push(0x8D);
     var color = undefined;
     QUEUE.forEach((item, index) => {
         if ('c' in item && item.p === 0 && !color) {

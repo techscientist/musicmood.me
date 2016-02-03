@@ -111,7 +111,7 @@ function initSerial() {
     }
     serialPort = new SerialPort.SerialPort(port, {
             // same as the embed hardware
-            baudrate: 921600
+            baudrate: 230400
         })
         .on('error', (err) => {
             if (err) {

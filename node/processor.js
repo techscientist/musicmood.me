@@ -29,11 +29,16 @@ function writeBuffer(tmp_buffer) {
             }
         });
     } else {
-        serialPort.open((error) => {
-            if (error) {
-                console.log('failed to open: ' + error);
-            }
-        });
+        if (serial_enabled) {
+            serialPort.open((error) => {
+                if (error) {
+                    console.log('failed to open: ' + error);
+                }
+            });
+        }else{
+            tools.logger('CONSOLE:');
+            tools.logger(buffer);
+        }
     }
 }
 
@@ -87,10 +92,7 @@ function SerialWrite() {
     });
     //tools.logger(`QUEUE AFTER ${JSON.stringify(QUEUE)}`);
     buffer = createBuffer(tmp_buffer);
-    if (serial_enabled) {
-        writeBuffer(buffer);
-    }
-    tools.logger(buffer);
+    writeBuffer(buffer);
     timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
 }
 

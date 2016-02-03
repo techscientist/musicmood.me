@@ -84,7 +84,6 @@ function processTrack(track, user) {
             harper = info.harper;
             total = harper.length;
             duration = info.duration;
-            //console.log(`\nUSER: ${user}\nMUSIC: ${info.music}\nARTIST: ${info.artist}\nGENRES: (${info.genres.toString()}) \nBPM: ${info.bpm} \nHARPER: ${total} \nDURATION: ${duration} \nENERGY: ${info.energy} \nVALENCE: ${info.valence}`);
 
             mongo.connect(url_mongo, (err, db) => {
                 if (!err) {
@@ -97,12 +96,13 @@ function processTrack(track, user) {
                                     processList[user]._finish();
                                     delete processList[user];
                                 }
+                            }else{
+                                processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
+                                    "energy": info.energy,
+                                    "valence": info.valence
+                                });
+                                processList[user]._init();
                             }
-                            processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
-                                "energy": info.energy,
-                                "valence": info.valence
-                            });
-                            processList[user]._init();
                         })
                 } else {
                     console.log(err);

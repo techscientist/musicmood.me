@@ -104,7 +104,7 @@ function initSerial() {
         });
     });
     var os = require("os").hostname();
-    var port = "/dev/ttyACM1"
+    var port = "/dev/ttyACM0"
         // add more cases
     if (os === "Elliot-Alderson.local") {
         port = "/dev/cu.usbmodem1412"

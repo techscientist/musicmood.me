@@ -101,16 +101,12 @@ module.exports = {
                             })
                             .toArray((err, items) => {
                                 if (items.length > 0) {
-                                    // TODO
-                                    // GMT -3 ?
-                                    var now = 0;
-                                    var uts = 1;
-                                    if (!!track.date) {
-                                        var now = parseInt(Date.now() / 1000);
-                                        var uts = parseInt(track.date.uts) + parseInt(duration*2 / 1000);
-                                    }
-                                    if (uts > now) {
-                                        resolve(items[0]);
+                                    if ('@attr' in track) {
+                                        if (track['@attr'].nowplaying) {
+                                            resolve(items[0]);
+                                        }else{
+                                            reject('\n' + user + ': OLD_SONG');
+                                        }
                                     } else {
                                         reject('\n' + user + ': OLD_SONG');
                                     }
@@ -198,26 +194,13 @@ module.exports = {
                                         })
                                         .then((preview_url) => {
                                             if (preview_url) {
-                                                // TODO
-                                                // GMT -3 ?
-                                                var now = 0;
-                                                var uts = 1;
-                                                if (!!track.date) {
-                                                    var now = parseInt(Date.now() / 1000);
-                                                    var uts = parseInt(track.date.uts) + parseInt(duration*2 / 1000);
-                                                }
-
-                                                if (uts > now) {
-                                                    createFolder();
-                                                    var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
-                                                    if (fileExists(filePath)) {
-                                                        return logBPM(filePath);
-                                                    } else {
-                                                        return downloadFile(preview_url, filePath)
-                                                            .then(() => logBPM(filePath));
-                                                    }
+                                                createFolder();
+                                                var filePath = `../tmp/${slugify(track.artist['#text'] + '-' + track.name)}.${fileType}`;
+                                                if (fileExists(filePath)) {
+                                                    return logBPM(filePath);
                                                 } else {
-                                                    return reject('\n' + user + ': OLD_SONG');
+                                                    return downloadFile(preview_url, filePath)
+                                                        .then(() => logBPM(filePath));
                                                 }
                                             } else {
                                                 reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
@@ -243,7 +226,7 @@ module.exports = {
                                                         resolve(info);
                                                     });
                                             } else {
-                                                return reject('\n' + user + ': NO_JSON');
+                                                reject('\n' + user + ': NO_JSON');
                                             }
                                         });
                                 }

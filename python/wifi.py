@@ -7,4 +7,4 @@ if __name__ == '__main__':
         (output, err) = p.communicate()
         p_status = p.wait()
         print output
-        # sleep(0.1)
+        sleep(5)

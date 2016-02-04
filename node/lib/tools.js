@@ -41,8 +41,7 @@ function createFolder() {
 function logBPM(filePath) {
     return new Promise((resolve, reject) => {
         if (!fileExists(filePath)) {
-            reject(new Error(`File not found ${filePath}`));
-            return;
+            reject(`File not found ${filePath}`);
         }
         var processFile = exec(`python ../python/processor.py ${filePath} ${duration} ${beats_per_second}`, {
             maxBuffer: 1024 * 10000
@@ -72,7 +71,12 @@ function createTrack(info) {
             if (!err) {
                 db.collection('songs').insertOne(info, (err, r) => {
                     if (!err) {
-                        fs.unlink(`../tmp/${info.slug}.${fileType}`);
+                        var file = `../tmp/${info.slug}.${fileType}`;
+                        fs.exists(file, (exists) => {
+                            if (exists) {
+                                fs.unlink(file);
+                            }
+                        });
                         resolve(info);
                     } else {
                         reject(err);

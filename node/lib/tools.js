@@ -148,7 +148,7 @@ module.exports = {
                                                             current_name = current_name.substring(3).trim();
                                                         }
                                                         if (playing_name.substring(0, 3) === "the") {
-                                                            current_name = playing_name.substring(3).trim();
+                                                            playing_name = playing_name.substring(3).trim();
                                                         }
                                                         if (current_name === playing_name) {
                                                             preview_url = item.preview_url;
@@ -171,7 +171,7 @@ module.exports = {
                                                                         current_name = current_name.substring(3).trim();
                                                                     }
                                                                     if (playing_name.substring(0, 3) === "the") {
-                                                                        current_name = playing_name.substring(3).trim();
+                                                                        playing_name = playing_name.substring(3).trim();
                                                                     }
                                                                     if (current_name === playing_name) {
                                                                         duration = item.trackTimeMillis;

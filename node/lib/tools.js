@@ -141,7 +141,7 @@ module.exports = {
                                                         energy = data.response.songs[0].audio_summary.energy;
                                                         valence = data.response.songs[0].audio_summary.valence;
                                                     }
-                                                    options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name)}&offset=0&limit=50&type=track`;
+                                                    options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(track.name+' '+track.artist['#text'])}&offset=0&limit=50&type=track`;
                                                     return rs(options);
                                                 })
                                         })
@@ -168,7 +168,7 @@ module.exports = {
                                                 if (preview_url) {
                                                     return preview_url;
                                                 } else {
-                                                    options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(track.name)}&entity=musicTrack`;
+                                                    options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(track.name+' '+track.artist['#text'])}&entity=musicTrack`;
                                                     return rs(options)
                                                         .then((data) => {
                                                             if (!!data && !!data.results) {

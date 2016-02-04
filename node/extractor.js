@@ -17,6 +17,7 @@ http.listen(3030, function() {
 
 var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var processList = {};
+processing = {};
 
 var Moods = new Moods();
 
@@ -37,6 +38,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
     this.socket = socketServer;
     this.interval = undefined;
     this.mood = mood;
+    this.playing = false;
 
     var _this = this;
 
@@ -67,8 +69,10 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
                     u: user
                 });
                 _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
+                _this.playing = true;
             } else {
                 clearTimeout(_this.interval);
+                _this.playing = false;
             }
         }
         _this.interval = setTimeout(_this.repeat, 1000 / _this.beats);
@@ -77,6 +81,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
         _this.socket.emit('finish', {
             u: user
         });
+        _this.playing = false;
         console.log(`${this.user}: FINISH`);
     }
 
@@ -106,45 +111,50 @@ function stopUser(user, why) {
             u: user
         });
     }
-    console.log(`${user}: ${why}`);
+    console.log('\x1b[36m',`${user}: ${why}`,'\x1b[0m');
 }
 
 function processTrack(track, user) {
-    tools.processTrack(track, user)
-        .then((info) => {
-            harper = info.harper;
-            total = harper.length;
-            duration = info.duration;
+    if (user in processList && processList[user].playing) {
+        console.log(user + ':\x1b[32m RUNNING ('+track.name+') \x1b[0m');
+    }else{
+        tools.processTrack(track, user)
+            .then((info) => {
+                harper = info.harper;
+                total = harper.length;
+                duration = info.duration;
 
-            mongo.connect(url_mongo, (err, db) => {
-                if (!err) {
-                    var find = db.collection('users')
-                        .findOne({
-                            username: user
-                        }, (err, item) => {
-                            if (user in processList) {
-                                if (processList[user].track.name !== track.name) {
-                                    stopUser(user, 'NEW_SONG');
+                mongo.connect(url_mongo, (err, db) => {
+                    if (!err) {
+                        var find = db.collection('users')
+                            .findOne({
+                                username: user
+                            }, (err, item) => {
+                                if (user in processList) {
+                                    if (processList[user].track.name !== track.name) {
+                                        stopUser(user, 'NEW_SONG');
+                                    }
+                                } else {
+                                    processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
+                                        "energy": info.energy,
+                                        "valence": info.valence
+                                    });
+                                    processList[user]._init();
                                 }
-                            } else {
-                                processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
-                                    "energy": info.energy,
-                                    "valence": info.valence
-                                });
-                                processList[user]._init();
-                            }
-                            db.close();
-                            return Promise.resolve();
-                        });
-                } else {
-                    return Promise.reject(err);
-                }
-            });
+                                db.close();
+                                return Promise.resolve();
+                            });
+                    } else {
+                        return Promise.reject(err);
+                    }
+                });
 
-        })
-        .catch((err) => {
-            stopUser(user, '\033[31m' + err + '\x1b[0m');
-        });
+            })
+            .catch((err) => {
+                stopUser(user, '\033[31m' + err + '\x1b[0m');
+            });
+    }
+
 }
 
 function initVisualization() {

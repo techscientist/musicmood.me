@@ -50,7 +50,11 @@ function logBPM(filePath) {
                 reject(err);
             } else {
                 var json = JSON.parse(stdout.replace('\n', ''));
-                resolve(json);
+                if (json.harper.length === 0) {
+                    reject('ERROR_PROCESSING_FILE');
+                } else {
+                    resolve(json);
+                }
             }
         });
     });
@@ -110,11 +114,11 @@ module.exports = {
                                     if ('@attr' in track) {
                                         if (track['@attr'].nowplaying) {
                                             resolve(items[0]);
-                                        }else{
-                                            reject('\n' + user + ': OLD_SONG');
+                                        } else {
+                                            reject(user + ': OLD_SONG');
                                         }
                                     } else {
-                                        reject('\n' + user + ': OLD_SONG');
+                                        reject(user + ': OLD_SONG');
                                     }
                                 } else {
                                     var options = {
@@ -186,15 +190,15 @@ module.exports = {
                                                                 if (preview_url) {
                                                                     return preview_url;
                                                                 } else {
-                                                                    reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
+                                                                    reject(user + ': NO_PREVIEW_FROM_APPLE');
                                                                 }
                                                             } else {
-                                                                reject('\n' + user + ': NO_PREVIEW_FROM_APPLE');
+                                                                reject(user + ': NO_PREVIEW_FROM_APPLE');
                                                             }
                                                         })
                                                 }
                                             } else {
-                                                reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
+                                                reject(user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
 
                                         })
@@ -209,14 +213,14 @@ module.exports = {
                                                         .then(() => logBPM(filePath));
                                                 }
                                             } else {
-                                                reject('\n' + user + ': NO_PREVIEW_FROM_SPOTIFY');
+                                                reject(user + ': NO_PREVIEW_FROM_SPOTIFY');
                                             }
                                         })
                                         .then((json) => {
                                             if (json) {
                                                 var info = {
                                                     slug: slugify(track.artist['#text'] + '-' + track.name),
-                                                    music: track.name,
+                                                    name: track.name,
                                                     artist: track.artist['#text'],
                                                     genres: genres,
                                                     bpm: json.bpm,
@@ -232,7 +236,7 @@ module.exports = {
                                                         resolve(info);
                                                     });
                                             } else {
-                                                reject('\n' + user + ': NO_JSON');
+                                                reject(user + ': NO_JSON');
                                             }
                                         });
                                 }

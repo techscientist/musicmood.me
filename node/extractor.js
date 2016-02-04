@@ -82,6 +82,16 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
 
 }
 
+function stopUser(user, why) {
+    if (user in processList) {
+        processList[user]._finish();
+        delete processList[user];
+        console.log(`${user}: stopping (${why})`);
+    } else {
+        console.log(`${user}: not born yet (${why})`);
+    }
+}
+
 function processTrack(track, user) {
     tools.processTrack(track, user)
         .then((info) => {
@@ -97,10 +107,9 @@ function processTrack(track, user) {
                         }, (err, item) => {
                             if (user in processList) {
                                 if (processList[user].track.name !== track.name) {
-                                    processList[user]._finish();
-                                    delete processList[user];
+                                    stopUser(user, 'new song');
                                 }
-                            }else{
+                            } else {
                                 processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
                                     "energy": info.energy,
                                     "valence": info.valence
@@ -108,18 +117,16 @@ function processTrack(track, user) {
                                 processList[user]._init();
                             }
                             db.close();
+                            return Promise.resolve();
                         });
                 } else {
-                    console.log(err);
+                    return Promise.reject(err);
                 }
             });
 
         })
         .catch((err) => {
-            transfer = false;
-            processList[user]._finish();
-            delete processList[user];
-            console.error(`${err}`);
+            stopUser(user, '\033[31m'+err+'\x1b[0m');
         });
 }
 
@@ -132,8 +139,13 @@ function initVisualization() {
                     var trackStream = lastfm.stream(element.username);
                     trackStream.on('nowPlaying', processTrack)
                         .on('error', function(error) {
-                            transfer = false;
-                            console.log('Weird Error: ', error);
+                            stopUser(element.username, error);
+                        })
+                        .on('lastPlayed', function(track) {
+                            stopUser(element.username, 'lastPlayed');
+                        })
+                        .on('stoppedPlaying', function(track) {
+                            stopUser(element.username, 'stoppedPlaying');
                         });
                     trackStream.start();
                     db.close();

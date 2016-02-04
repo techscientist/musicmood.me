@@ -47,7 +47,7 @@ function logBPM(filePath) {
             maxBuffer: 1024 * 10000
         }, (err, stdout, stderr) => {
             if (err) {
-                reject(err);
+                reject(`logBPM ${err}`);
             } else {
                 var json = JSON.parse(stdout.replace('\n', ''));
                 if (json.harper.length === 0) {
@@ -63,7 +63,7 @@ function logBPM(filePath) {
 function downloadFile(preview_url, filePath) {
     return new Promise((resolve, reject) => {
         rs.get(preview_url)
-            .on('error', (err) => reject(err))
+            .on('error', (err) => reject(`downloadFile ${err}`))
             .on('end', () => resolve(filePath))
             .pipe(fs.createWriteStream(filePath));
     });
@@ -83,12 +83,12 @@ function createTrack(info) {
                         });
                         resolve(info);
                     } else {
-                        reject(err);
+                        reject(`createTrack 1 ${err}`);
                     }
                     db.close();
                 });
             } else {
-                reject(err);
+                reject(`createTrack 2 ${err}`);
             }
         });
     })
@@ -115,10 +115,10 @@ module.exports = {
                                         if (track['@attr'].nowplaying) {
                                             resolve(items[0]);
                                         } else {
-                                            reject(user + ': OLD_SONG');
+                                            reject('OLD_SONG');
                                         }
                                     } else {
-                                        reject(user + ': OLD_SONG');
+                                        reject('OLD_SONG');
                                     }
                                 } else {
                                     var options = {
@@ -190,15 +190,15 @@ module.exports = {
                                                                 if (preview_url) {
                                                                     return preview_url;
                                                                 } else {
-                                                                    reject(user + ': NO_PREVIEW_FROM_APPLE');
+                                                                    reject('NO_PREVIEW_FROM_APPLE');
                                                                 }
                                                             } else {
-                                                                reject(user + ': NO_PREVIEW_FROM_APPLE');
+                                                                reject('NO_PREVIEW_FROM_APPLE');
                                                             }
                                                         })
                                                 }
                                             } else {
-                                                reject(user + ': NO_PREVIEW_FROM_SPOTIFY');
+                                                reject('NO_PREVIEW_FROM_SPOTIFY');
                                             }
 
                                         })
@@ -210,10 +210,12 @@ module.exports = {
                                                     return logBPM(filePath);
                                                 } else {
                                                     return downloadFile(preview_url, filePath)
-                                                        .then(() => logBPM(filePath));
+                                                        .then(() => {
+                                                            return logBPM(filePath);
+                                                        });
                                                 }
                                             } else {
-                                                reject(user + ': NO_PREVIEW_FROM_SPOTIFY');
+                                                reject('NO_PREVIEW_FROM_SPOTIFY');
                                             }
                                         })
                                         .then((json) => {
@@ -236,19 +238,19 @@ module.exports = {
                                                         resolve(info);
                                                     });
                                             } else {
-                                                reject(user + ': NO_JSON');
+                                                reject('NO_JSON');
                                             }
                                         });
                                 }
                                 db.close();
                             });
                     } else {
-                        reject('\n' + user + ': ' + err);
+                        reject(`processTrack ${err}`);
                     }
                 });
             })
         } else {
-            return Promise.reject('\n' + user + ': NO_MUSIC');
+            return Promise.reject('NO_MUSIC');
         }
     },
     newUser: (info) => {

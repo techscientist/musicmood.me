@@ -41,7 +41,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
     var _this = this;
 
     this._init = () => {
-        console.log('_init', _this.user, `(${_this.track.artist['#text']} - ${_this.track.name})`);
+        console.log(`${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`);
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {
@@ -77,19 +77,36 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
         _this.socket.emit('finish', {
             u: user
         });
-        console.log('_finish', _this.user);
+        console.log(`${this.user}: FINISH`);
     }
 
+}
+
+function dumpError(err) {
+    if (typeof err === 'object') {
+        if (err.message) {
+            console.log('\nMessage: ' + err.message);
+        }
+        if (err.stack) {
+            console.log('\nStacktrace:');
+            console.log('====================');
+            console.log(err.stack);
+            console.log('====================');
+        }
+    } else {
+        console.log('dumpError :: argument is not an object');
+    }
 }
 
 function stopUser(user, why) {
     if (user in processList) {
         processList[user]._finish();
         delete processList[user];
-        console.log(`${user}: stopping (${why})`);
-    } else {
-        console.log(`${user}: not born yet (${why})`);
+        io.emit('finish', {
+            u: user
+        });
     }
+    console.log(`${user}: ${why}`);
 }
 
 function processTrack(track, user) {
@@ -107,7 +124,7 @@ function processTrack(track, user) {
                         }, (err, item) => {
                             if (user in processList) {
                                 if (processList[user].track.name !== track.name) {
-                                    stopUser(user, 'new song');
+                                    stopUser(user, 'NEW_SONG');
                                 }
                             } else {
                                 processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
@@ -126,7 +143,7 @@ function processTrack(track, user) {
 
         })
         .catch((err) => {
-            stopUser(user, '\033[31m'+err+'\x1b[0m');
+            stopUser(user, '\033[31m' + err + '\x1b[0m');
         });
 }
 
@@ -139,6 +156,7 @@ function initVisualization() {
                     var trackStream = lastfm.stream(element.username);
                     trackStream.on('nowPlaying', processTrack)
                         .on('error', function(error) {
+                            //dumpError(error);
                             stopUser(element.username, error);
                         })
                         .on('lastPlayed', function(track) {

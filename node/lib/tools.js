@@ -161,6 +161,7 @@ module.exports = {
                                                         if (current_name === playing_name) {
                                                             preview_url = item.preview_url;
                                                             duration = item.duration_ms;
+                                                            fileType = 'mp3';
                                                         }
                                                     });
                                                 });

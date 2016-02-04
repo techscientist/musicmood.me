@@ -6,13 +6,11 @@ var tools = require('./lib/tools');
 var Moods = require('./lib/moods');
 var mongo = require('mongodb').MongoClient;
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
     res.sendfile('views/socket.html');
 });
 
-http.listen(3030, function() {
-    console.log('listening on *:3030');
-});
+http.listen(3030);
 
 
 var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
@@ -43,7 +41,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
     var _this = this;
 
     this._init = () => {
-        console.log(`${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`);
+        console.log('\x1b[33m',`${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`,'\x1b[0m');
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {
@@ -82,7 +80,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             u: user
         });
         _this.playing = false;
-        console.log(`${this.user}: FINISH`);
+        console.log('\x1b[33m',`${this.user}: FINISH`,'\x1b[0m');
     }
 
 }
@@ -115,8 +113,8 @@ function stopUser(user, why) {
 }
 
 function processTrack(track, user) {
-    if (user in processList && processList[user].playing) {
-        console.log(user + ':\x1b[32m RUNNING ('+track.name+') \x1b[0m');
+    if (user in processList && processList[user].playing && track.name === processList[user].track.name) {
+        console.log(user + ':\x1b[32m RUNNING ('+processList[user].track.name+') \x1b[0m');
     }else{
         tools.processTrack(track, user)
             .then((info) => {

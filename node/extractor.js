@@ -39,7 +39,9 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
     this.playing = false;
 
     var _this = this;
-
+    _this.socket.emit('finish', {
+        u: user
+    });
     this._init = () => {
         console.log('\x1b[33m',`${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`,'\x1b[0m');
         var mood = Moods.NearestFeeling(_this.mood);

@@ -1,5 +1,5 @@
 {
-  "name": "spotify-visualizer",
+  "name": "lastfm-moodboard",
   "version": "0.0.1",
   "private": true,
   "description": "A Node.js and Python visualizer for the nowPlaying status of D3zes",

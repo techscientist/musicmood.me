@@ -7,6 +7,8 @@ var LastFmNode = require('lastfm').LastFmNode;
 var url = require('url');
 var mongo = require('mongodb').MongoClient;
 var bodyParser = require('body-parser');
+var ioc = require('socket.io-client');
+var client = ioc.connect("http://localhost:3030");
 
 var app = express();
 
@@ -110,10 +112,9 @@ app.get('/auth', (req, res) => {
         token: token,
         handlers: {
             success: (session) => {
-                console.log(session);
                 tools.newUser(session)
                     .then((result) => {
-                        console.log(result);
+                        client.emit('new_user', result.ops[0].username);
                         res.redirect('/');
                     }).catch((err) => {
                         console.log(err);

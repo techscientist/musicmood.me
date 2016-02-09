@@ -10,9 +10,6 @@ app.get('/', (req, res) => {
     res.sendfile('views/socket.html');
 });
 
-http.listen(3030);
-
-
 var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var processList = {};
 processing = {};
@@ -43,7 +40,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
         u: user
     });
     this._init = () => {
-        console.log('\x1b[33m',`${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`,'\x1b[0m');
+        console.log('\x1b[33m', `${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`, '\x1b[0m');
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {
@@ -82,7 +79,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             u: user
         });
         _this.playing = false;
-        console.log('\x1b[33m',`${this.user}: FINISH`,'\x1b[0m');
+        console.log('\x1b[33m', `${this.user}: FINISH`, '\x1b[0m');
     }
 
 }
@@ -111,13 +108,13 @@ function stopUser(user, why) {
             u: user
         });
     }
-    console.log('\x1b[36m',`${user}: ${why}`,'\x1b[0m');
+    console.log('\x1b[36m', `${user}: ${why}`, '\x1b[0m');
 }
 
 function processTrack(track, user) {
     if (user in processList && processList[user].playing && track.name === processList[user].track.name) {
-        console.log(user + ':\x1b[32m RUNNING ('+processList[user].track.name+') \x1b[0m');
-    }else{
+        console.log(user + ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
+    } else {
         tools.processTrack(track, user)
             .then((info) => {
                 harper = info.harper;
@@ -157,25 +154,29 @@ function processTrack(track, user) {
 
 }
 
+function initNewUser(username) {
+    var trackStream = lastfm.stream(username);
+    trackStream.on('nowPlaying', processTrack)
+        .on('error', function(error) {
+            //dumpError(error);
+            stopUser(username, error);
+        })
+        .on('lastPlayed', function(track) {
+            stopUser(username, 'lastPlayed');
+        })
+        .on('stoppedPlaying', function(track) {
+            stopUser(username, 'stoppedPlaying');
+        });
+    trackStream.start();
+}
+
 function initVisualization() {
     mongo.connect(url_mongo, (err, db) => {
         if (!err) {
             var find = db.collection('users')
                 .find({})
                 .forEach((element) => {
-                    var trackStream = lastfm.stream(element.username);
-                    trackStream.on('nowPlaying', processTrack)
-                        .on('error', function(error) {
-                            //dumpError(error);
-                            stopUser(element.username, error);
-                        })
-                        .on('lastPlayed', function(track) {
-                            stopUser(element.username, 'lastPlayed');
-                        })
-                        .on('stoppedPlaying', function(track) {
-                            stopUser(element.username, 'stoppedPlaying');
-                        });
-                    trackStream.start();
+                    initNewUser(element.username);
                     db.close();
                 });
         } else {
@@ -183,5 +184,13 @@ function initVisualization() {
         }
     });
 }
+
+io.on('connection', (socket) => {
+    socket.on('new_user', (username) => {
+        initNewUser(username);
+    })
+});
+
+http.listen(3030);
 
 initVisualization();

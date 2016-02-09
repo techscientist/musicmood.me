@@ -1,5 +1,14 @@
-var ioc = require('socket.io-client');
-var client = ioc.connect("http://10.0.1.42:3030");
+var os = require('os');
+
+var ioc = require('socket.io-client'),
+    client;
+
+
+if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
+    client = ioc.connect("http://localhost:3030");
+}else{
+    var client = ioc.connect("http://10.0.1.42:3030");
+}
 
 var tools = require('./lib/tools');
 var SerialPort = require("serialport");
@@ -37,8 +46,7 @@ function writeBuffer(tmp_buffer) {
                 }
             });
         }else{
-            tools.logger('CONSOLE:');
-            tools.logger(buffer);
+            console.log('CNSL', buffer);
         }
     }
 }
@@ -97,17 +105,20 @@ function SerialWrite() {
         return item.p === 0;
     });
     //tools.logger(`QUEUE AFTER ${JSON.stringify(QUEUE)}`);
-    buffer = createBuffer(tmp_buffer);
-    writeBuffer(buffer);
+    if (JSON.stringify(tmp_buffer) !== cache_buffer) {
+        buffer = createBuffer(tmp_buffer);
+        writeBuffer(buffer);
+        cache_buffer = JSON.stringify(tmp_buffer);
+    }
     timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
 }
 
 function initSerial() {
-    SerialPort.list(function(err, ports) {
-        ports.forEach(function(port) {
-            console.log(`\n${port.comName}, ${port.pnpId}, ${port.manufacturer}`);
-        });
-    });
+    // SerialPort.list(function(err, ports) {
+    //     ports.forEach(function(port) {
+    //         console.log(`\n${port.comName}, ${port.pnpId}, ${port.manufacturer}`);
+    //     });
+    // });
     var os = require("os").hostname();
     var port = "/dev/ttyACM0"
         // add more cases

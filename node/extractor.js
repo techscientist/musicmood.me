@@ -19,6 +19,7 @@ var lastfm = new LastFmNode({
         api_key: tools.LASTFM_API_KEY,
         secret: tools.LASTFM_API_SEC
     }),
+    main_index = -1,
     harper, total, duration;
 
 var ProcessUser = function(user, index, beats, track, harper, socketServer, mood) {
@@ -101,7 +102,7 @@ function dumpError(err) {
 function stopUser(user, why) {
     if (user in processList) {
         processList[user]._finish();
-        delete processList[user];
+        //delete processList[user];
         io.emit('finish', {
             u: user
         });
@@ -128,9 +129,12 @@ function processTrack(track, user) {
                                 if (user in processList) {
                                     if (processList[user].track.name !== track.name) {
                                         stopUser(user, 'NEW_SONG');
+                                    }else{
+                                        //we do not have to do anything, the song is playing
                                     }
                                 } else {
-                                    processList[user] = new ProcessUser(user, parseInt(item.index), tools.BEATS_PER_SECOND, track, harper, io, {
+                                    main_index += 1;
+                                    processList[user] = new ProcessUser(user, main_index, tools.BEATS_PER_SECOND, track, harper, io, {
                                         "energy": info.energy,
                                         "valence": info.valence
                                     });

@@ -5,7 +5,7 @@ var rs = require('request-promise');
 var mongo = require('mongodb').MongoClient;
 var os = require('os');
 
-var mongo_server = 'mongodb://localhost:27017/spotify-visualizer',
+var mongo_server = 'mongodb://localhost:27017/lastfm-moodboard',
     ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
     duration = 0,
     fileType = 'mp3',

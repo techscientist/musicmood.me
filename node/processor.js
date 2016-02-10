@@ -1,14 +1,8 @@
 var os = require('os');
+var tools = require('./lib/tools');
 
 var ioc = require('socket.io-client'),
-    client;
-
-
-if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
-    client = ioc.connect("http://localhost:3030");
-}else{
-    var client = ioc.connect("http://10.0.1.42:3030");
-}
+    client = ioc.connect(`${tools.SOCKET_SERVER}:${tools.SOCKET_PORT}`);
 
 var tools = require('./lib/tools');
 var SerialPort = require("serialport");
@@ -119,10 +113,9 @@ function initSerial() {
     //         console.log(`\n${port.comName}, ${port.pnpId}, ${port.manufacturer}`);
     //     });
     // });
-    var os = require("os").hostname();
     var port = "/dev/ttyACM0"
         // add more cases
-    if (os === "Elliot-Alderson.local") {
+    if (os.hostname() === "Elliot-Alderson.local") {
         port = "/dev/cu.usbmodem1412"
     }
     serialPort = new SerialPort.SerialPort(port, {

@@ -3,6 +3,7 @@ var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var rs = require('request-promise');
 var mongo = require('mongodb').MongoClient;
+var os = require('os');
 
 var mongo_server = 'mongodb://localhost:27017/spotify-visualizer',
     ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
@@ -10,7 +11,15 @@ var mongo_server = 'mongodb://localhost:27017/spotify-visualizer',
     fileType = 'mp3',
     beats_per_second = 50,
     energy = 0,
-    valence = 0;
+    valence = 0,
+    socket_port = 3030,
+    socket_server = undefined;
+
+if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
+    socket_server = 'http://localhost';
+}else{
+    socket_server = 'http://10.0.1.42';
+}
 
 function slugify(text) {
     return text.toString().toLowerCase()
@@ -99,6 +108,8 @@ module.exports = {
     LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
     BEATS_PER_SECOND: beats_per_second,
     MONGO_SERVER: mongo_server,
+    SOCKET_SERVER: socket_server,
+    SOCKET_PORT: socket_port,
     processTrack: (track, user) => {
         if (track && !!track.name) {
             return new Promise((resolve, reject) => {

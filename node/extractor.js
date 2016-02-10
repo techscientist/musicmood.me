@@ -10,7 +10,6 @@ app.get('/', (req, res) => {
     res.sendfile('views/socket.html');
 });
 
-var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
 var processList = {};
 processing = {};
 
@@ -20,7 +19,6 @@ var lastfm = new LastFmNode({
         api_key: tools.LASTFM_API_KEY,
         secret: tools.LASTFM_API_SEC
     }),
-    url_mongo = 'mongodb://localhost:27017/spotify-visualizer',
     harper, total, duration;
 
 var ProcessUser = function(user, index, beats, track, harper, socketServer, mood) {
@@ -121,7 +119,7 @@ function processTrack(track, user) {
                 total = harper.length;
                 duration = info.duration;
 
-                mongo.connect(url_mongo, (err, db) => {
+                mongo.connect(tools.MONGO_SERVER, (err, db) => {
                     if (!err) {
                         var find = db.collection('users')
                             .findOne({
@@ -132,7 +130,7 @@ function processTrack(track, user) {
                                         stopUser(user, 'NEW_SONG');
                                     }
                                 } else {
-                                    processList[user] = new ProcessUser(user, parseInt(item.index), beats_per_second, track, harper, io, {
+                                    processList[user] = new ProcessUser(user, parseInt(item.index), tools.BEATS_PER_SECOND, track, harper, io, {
                                         "energy": info.energy,
                                         "valence": info.valence
                                     });
@@ -171,7 +169,7 @@ function initNewUser(username) {
 }
 
 function initVisualization() {
-    mongo.connect(url_mongo, (err, db) => {
+    mongo.connect(tools.MONGO_SERVER, (err, db) => {
         if (!err) {
             var find = db.collection('users')
                 .find({})
@@ -191,6 +189,6 @@ io.on('connection', (socket) => {
     })
 });
 
-http.listen(3030);
+http.listen(tools.SOCKET_PORT);
 
 initVisualization();

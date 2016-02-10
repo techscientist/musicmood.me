@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var Moods = require('./lib/moods');
-var mongo = require('mongodb').MongoClient;
+var mongo = require('./lib/mongo').initPool();
 
 app.get('/', (req, res) => {
     res.sendfile('views/socket.html');
@@ -120,32 +120,27 @@ function processTrack(track, user) {
                 total = harper.length;
                 duration = info.duration;
 
-                mongo.connect(tools.MONGO_SERVER, (err, db) => {
-                    if (!err) {
-                        var find = db.collection('users')
-                            .findOne({
-                                username: user
-                            }, (err, item) => {
-                                if (user in processList) {
-                                    if (processList[user].track.name !== track.name) {
-                                        stopUser(user, 'NEW_SONG');
-                                    }else{
-                                        //we do not have to do anything, the song is playing
-                                    }
+                mongo.getInstance((db) => {
+                    db.collection('users')
+                        .findOne({
+                            username: user
+                        }, (err, item) => {
+                            if (user in processList) {
+                                if (processList[user].track.name !== track.name) {
+                                    stopUser(user, 'NEW_SONG');
                                 } else {
-                                    main_index += 1;
-                                    processList[user] = new ProcessUser(user, main_index, tools.BEATS_PER_SECOND, track, harper, io, {
-                                        "energy": info.energy,
-                                        "valence": info.valence
-                                    });
-                                    processList[user]._init();
+                                    //we do not have to do anything, the song is playing
                                 }
-                                db.close();
-                                return Promise.resolve();
-                            });
-                    } else {
-                        return Promise.reject(err);
-                    }
+                            } else {
+                                main_index += 1;
+                                processList[user] = new ProcessUser(user, main_index, tools.BEATS_PER_SECOND, track, harper, io, {
+                                    "energy": info.energy,
+                                    "valence": info.valence
+                                });
+                                processList[user]._init();
+                            }
+                            return Promise.resolve();
+                        });
                 });
 
             })
@@ -173,17 +168,12 @@ function initNewUser(username) {
 }
 
 function initVisualization() {
-    mongo.connect(tools.MONGO_SERVER, (err, db) => {
-        if (!err) {
-            var find = db.collection('users')
-                .find({})
-                .forEach((element) => {
-                    initNewUser(element.username);
-                    db.close();
-                });
-        } else {
-            console.log(err);
-        }
+    mongo.getInstance((db) => {
+        db.collection('users')
+            .find({})
+            .forEach((element) => {
+                initNewUser(element.username);
+            });
     });
 }
 

@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var url = require("./tools").MONGO_SERVER;
+var url = 'mongodb://localhost:27017/lastfm-moodboard';
 
 var option = {
     db: {

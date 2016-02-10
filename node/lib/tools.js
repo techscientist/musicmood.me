@@ -17,7 +17,7 @@ var mongo_server = 'mongodb://localhost:27017/lastfm-moodboard',
 
 if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
     socket_server = 'http://localhost';
-}else{
+} else {
     socket_server = 'http://10.0.1.42';
 }
 

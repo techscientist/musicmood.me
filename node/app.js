@@ -5,7 +5,7 @@ var tools = require('./lib/tools');
 var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
 var url = require('url');
-var mongo = require('mongodb').MongoClient;
+var mongo = require('./lib/mongo').initPool();
 var bodyParser = require('body-parser');
 var ioc = require('socket.io-client');
 var client = ioc.connect("http://localhost:3030");
@@ -59,30 +59,19 @@ app.get('/', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-    mongo.connect(url_mongo, (err, db) => {
-        if (!err) {
-            var find = db.collection('users').find({}).toArray((err, items) => {
-                if (!err) {
-                    res.locals = {
-                        title: 'Update User Fields Last.FM',
-                        users: items
-                    }
-                    res.render('admin');
-                } else {
-                    console.log(err);
+
+    mongo.getInstance((db) => {
+        db.collection('users').find({}).toArray((err, items) => {
+            if (!err) {
+                res.locals = {
+                    title: 'Update User Fields Last.FM',
+                    users: items
                 }
-            })
-        } else {
-            res.locals = {
-                title: 'Update User Fields Last.FM',
-                users: [{
-                    name: 'Not found',
-                    username: 'No one',
-                    mac_address: 'Nowhere'
-                }]
+                res.render('admin');
+            } else {
+                console.log(err);
             }
-            res.render('admin');
-        }
+        });
     });
 });
 

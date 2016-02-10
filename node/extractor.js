@@ -22,14 +22,14 @@ var lastfm = new LastFmNode({
     main_index = -1,
     harper, total, duration;
 
-var ProcessUser = function(user, index, beats, track, harper, socketServer, mood) {
+var ProcessUser = function(user, index, track, harper, mood) {
 
     this.user = user;
     this.index = index;
-    this.beats = beats;
+    this.beats = tools.BEATS_PER_SECOND;
     this.track = track;
     this.harper = harper;
-    this.socket = socketServer;
+    this.socket = io;
     this.interval = undefined;
     this.mood = mood;
     this.playing = false;
@@ -48,7 +48,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             p: 0
         })
         _this.repeat = function() {
-            if (_this.harper.length > 0) {
+            if (_this.harper.length > 0 && _this.playing) {
                 var eq = _this.harper[0],
                     percent = (100 * eq / 1000).toFixed(0),
                     buffer = '';
@@ -110,6 +110,15 @@ function stopUser(user, why) {
     console.log('\x1b[36m', `${user}: ${why}`, '\x1b[0m');
 }
 
+function initUser(user, track, main_index, harper, mood) {
+    processList[user] = new ProcessUser(user, main_index, track, harper, {
+        "energy": mood.energy,
+        "valence": mood.valence
+    });
+    processList[user].playing = true;
+    processList[user]._init();
+}
+
 function processTrack(track, user) {
     if (user in processList && processList[user].playing && track.name === processList[user].track.name) {
         console.log(user + ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
@@ -119,6 +128,10 @@ function processTrack(track, user) {
                 harper = info.harper;
                 total = harper.length;
                 duration = info.duration;
+                mood = {
+                    "energy": info.energy,
+                    "valence": info.valence
+                }
 
                 mongo.getInstance((db) => {
                     db.collection('users')
@@ -128,16 +141,13 @@ function processTrack(track, user) {
                             if (user in processList) {
                                 if (processList[user].track.name !== track.name) {
                                     stopUser(user, 'NEW_SONG');
+                                    initUser(user, track, processList[user].index, harper, mood);
                                 } else {
                                     //we do not have to do anything, the song is playing
                                 }
                             } else {
                                 main_index += 1;
-                                processList[user] = new ProcessUser(user, main_index, tools.BEATS_PER_SECOND, track, harper, io, {
-                                    "energy": info.energy,
-                                    "valence": info.valence
-                                });
-                                processList[user]._init();
+                                initUser(user, track, main_index, harper, mood);
                             }
                             return Promise.resolve();
                         });

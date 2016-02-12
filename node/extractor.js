@@ -40,7 +40,7 @@ var ProcessUser = function(user, index, track, harper, mood) {
     });
     this._init = () => {
         var date = new Date().toJSON();
-        console.log(date.slice(0,10), date.slice(11, 23),'\x1b[33m', `${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`, '\x1b[0m');
+        console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[33m', `${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`, '\x1b[0m');
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {
@@ -80,7 +80,7 @@ var ProcessUser = function(user, index, track, harper, mood) {
         });
         _this.playing = false;
         var date = new Date().toJSON();
-        console.log(date.slice(0,10), date.slice(11, 23),'\x1b[33m', `${this.user}: FINISH`, '\x1b[0m');
+        console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[33m', `${this.user}: FINISH`, '\x1b[0m');
     }
 
 }
@@ -112,7 +112,7 @@ function stopUser(user, why) {
         }
     }
     var date = new Date().toJSON();
-    console.log(date.slice(0,10), date.slice(11, 23),'\x1b[36m', `${user}: ${why}`, '\x1b[0m');
+    console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[36m', `${user}: ${why}`, '\x1b[0m');
 }
 
 function initUser(user, track, main_index, harper, mood) {
@@ -126,7 +126,8 @@ function initUser(user, track, main_index, harper, mood) {
 
 function processTrack(track, user) {
     if (user in processList && processList[user].playing && track.name === processList[user].track.name) {
-        console.log(user + ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
+        var date = new Date().toJSON();
+        console.log(date.slice(0, 10), date.slice(11, 23), user, ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
     } else {
         tools.processTrack(track, user)
             .then((info) => {

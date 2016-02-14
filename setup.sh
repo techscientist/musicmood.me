@@ -1,8 +1,10 @@
-sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get install -y build-essential libssl-dev python-pip python-dev libfreetype6 libfreetype6-dev pkg-config python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose libsamplerate0 libsamplerate0-dev libav-tools git mongodb
-curl https://raw.githubusercontent.com/creationix/nvm/v0.7.0/install.sh | sh
-source ~/.profile
-nvm install 5.5.0
+apt-get update -y
+apt-get upgrade -y
+apt-get install -y build-essential git ipython ipython-notebook libav-tools libfreetype6 libfreetype6-dev libsamplerate0 libsamplerate0-dev libssl-dev mongodb pkg-config python-dev python-matplotlib python-nose python-numpy python-pandas python-pip python-scipy python-sympy
+curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+apt-get install -y nodejs
 cd node
-npm install
+sudo npm install
+cd ..
+cd python
+pip install -r requirements.txt

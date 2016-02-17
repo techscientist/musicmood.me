@@ -8,7 +8,9 @@ var url = require('url');
 var mongo = require('./lib/mongo').initPool();
 var bodyParser = require('body-parser');
 var ioc = require('socket.io-client');
-var client = ioc.connect("http://localhost:3030");
+var client = ioc.connect(`${tools.SOCKET_SERVER}:${tools.SOCKET_PORT}`);
+var Moods = require('./lib/moods');
+Moods = new Moods();
 
 var app = express();
 
@@ -59,7 +61,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-
     mongo.getInstance((db) => {
         db.collection('users').find({}).toArray((err, items) => {
             if (!err) {
@@ -73,6 +74,13 @@ app.get('/admin', (req, res) => {
             }
         });
     });
+});
+
+app.get('/colors', (req, res) => {
+    res.locals = {
+        moods: Moods.moods
+    }
+    res.render('colors');
 });
 
 app.post('/update', (req, res) => {

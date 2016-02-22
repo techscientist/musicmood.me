@@ -1,0 +1,39 @@
+{{#extend "body"}}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/admin">Musicolor</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container search">
+        <div class="starter-template">
+            <form role="form" action="/get_song/" method="post">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" id="search-query" placeholder="Search" class="form-control">
+                                <span class="input-group-btn">
+                                    <button class="btn" type="submit">
+                                        <span class="fui-search"></span>
+                                </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-lg-12 player">
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{{/extend}}

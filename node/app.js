@@ -47,9 +47,11 @@ var lastfm = new LastFmNode({
     secret: tools.LASTFM_API_SEC
 });
 
-var url_mongo = 'mongodb://localhost:27017/spotify-visualizer';
-
 app.get('/', (req, res) => {
+    res.render('index');
+});
+
+app.get('/login', (req, res) => {
     var authUrl = lfm.getAuthenticationUrl({
         'cb': req.protocol + '://' + req.get('host') + '/auth'
     });
@@ -57,7 +59,7 @@ app.get('/', (req, res) => {
         title: 'Login Last.FM',
         url: authUrl
     }
-    res.render('index');
+    res.render('login');
 });
 
 app.get('/admin', (req, res) => {
@@ -112,10 +114,10 @@ app.get('/auth', (req, res) => {
                 tools.newUser(session)
                     .then((result) => {
                         client.emit('new_user', result.ops[0].username);
-                        res.redirect('/');
+                        res.redirect('/login');
                     }).catch((err) => {
                         console.log(err);
-                        res.redirect('/');
+                        res.redirect('/login');
                     });
             },
             error: (err) => {

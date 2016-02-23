@@ -20,6 +20,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(bodyParser.json());
 
 var blocks = {};
 
@@ -49,6 +50,24 @@ var lastfm = new LastFmNode({
 
 app.get('/', (req, res) => {
     res.render('index');
+});
+
+app.post('/get_song', (req, res) => {
+    var song = req.body.song;
+    var artist = req.body.artist;
+    tools.searchSong(song, artist)
+        .then((info) => {
+            res.json({
+                "mood": Moods.NearestFeeling({"energy":info.energy, "valence":info.valence}),
+                "preview_url": info.preview_url
+            });
+        })
+        .catch((error) => {
+            res.json({
+                "error": true,
+                "msg": error
+            })
+        })
 });
 
 app.get('/login', (req, res) => {

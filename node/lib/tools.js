@@ -253,6 +253,91 @@ module.exports = {
             return Promise.reject('NO_MUSIC');
         }
     },
+    searchSong: (song, artist) => {
+        if (song && artist) {
+            return new Promise((resolve, reject) => {
+                var options = {
+                    uri: `http://developer.echonest.com/api/v4/song/search?api_key=${ECHONEST_API_KEY}&format=json&results=1&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(song)}&bucket=audio_summary`,
+                    json: true
+                }
+                rs(options)
+                    .then((data) => {
+                        var energy = 0;
+                        var valence = 0;
+                        if (!!data && !!data.response && !!data.response.songs && data.response.songs.length > 0) {
+                            energy = data.response.songs[0].audio_summary.energy;
+                            valence = data.response.songs[0].audio_summary.valence;
+                        }
+
+                        options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(song+' '+artist)}&offset=0&limit=50&type=track`;
+                        rs(options)
+                        .then((data) =>{
+                            var preview_url = undefined;
+                            if (!!data && !!data.tracks && !!data.tracks.items) {
+                                data.tracks.items.forEach((item) => {
+                                    item.artists.forEach((artist_name) => {
+                                        var current_name = artist_name.name.toLowerCase().trim();
+                                        var playing_name = artist.toLowerCase().trim();
+                                        if (current_name.substring(0, 3) === "the") {
+                                            current_name = current_name.substring(3).trim();
+                                        }
+                                        if (playing_name.substring(0, 3) === "the") {
+                                            playing_name = playing_name.substring(3).trim();
+                                        }
+                                        if (current_name === playing_name) {
+                                            preview_url = item.preview_url;
+                                        }
+                                    });
+                                });
+
+                                if (preview_url) {
+                                    resolve({
+                                        "preview_url": preview_url,
+                                        "energy": energy,
+                                        "valence": valence
+                                    });
+                                } else {
+                                    options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(song+' '+artist)}&entity=musicTrack`;
+                                    rs(options)
+                                        .then((data) => {
+                                            if (!!data && !!data.results) {
+                                                data.results.forEach((item) => {
+                                                    var current_name = item.artistName.toLowerCase().trim();
+                                                    var playing_name = artist.toLowerCase().trim();
+                                                    if (current_name.substring(0, 3) === "the") {
+                                                        current_name = current_name.substring(3).trim();
+                                                    }
+                                                    if (playing_name.substring(0, 3) === "the") {
+                                                        playing_name = playing_name.substring(3).trim();
+                                                    }
+                                                    if (current_name === playing_name) {
+                                                        preview_url = item.previewUrl;
+                                                    }
+                                                });
+                                                if (preview_url) {
+                                                    resolve({
+                                                        "preview_url": preview_url,
+                                                        "energy": energy,
+                                                        "valence": valence
+                                                    });
+                                                } else {
+                                                    reject('NO_PREVIEW_FROM_APPLE');
+                                                }
+                                            } else {
+                                                reject('NO_PREVIEW_FROM_APPLE');
+                                            }
+                                        })
+                                }
+                            } else {
+                                reject('NO_PREVIEW_FROM_SPOTIFY');
+                            }
+                        })
+                    })
+            })
+        } else {
+            return Promise.reject('NO_MUSIC');
+        }
+    },
     newUser: (info) => {
         return new Promise((resolve, reject) => {
             mongo.getInstance((db) => {

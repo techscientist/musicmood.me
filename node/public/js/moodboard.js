@@ -1,7 +1,7 @@
 var moodboard = function(url) {
     var ALPHA, AudioAnalyser, COLORS, MP3_PATH, NUM_BANDS, NUM_PARTICLES, Particle, SCALE, SIZE, SMOOTHING, SPEED, SPIN;
     NUM_PARTICLES = 1;
-    NUM_BANDS = 128;
+    NUM_BANDS = 64;
     SMOOTHING = 0.5;
     MP3_PATH = url;
     SCALE = {
@@ -121,35 +121,6 @@ var moodboard = function(url) {
             this.rotation = random(TWO_PI);
             return this.energy = 0;
         };
-        Particle.prototype.move = function() {
-            this.rotation += this.spin;
-            return this.y -= this.speed * this.level;
-        };
-        Particle.prototype.draw = function(ctx) {
-            var alpha, power, scale;
-            power = exp(this.energy);
-            scale = this.scale * power;
-            alpha = this.alpha * this.energy * 1.5;
-            this.decayScale = max(this.decayScale, scale);
-            this.decayAlpha = max(this.decayAlpha, alpha);
-            this.smoothedScale += (this.decayScale - this.smoothedScale) * 0.3;
-            this.smoothedAlpha += (this.decayAlpha - this.smoothedAlpha) * 0.3;
-            this.decayScale *= 0.985;
-            this.decayAlpha *= 0.975;
-            ctx.save();
-            ctx.beginPath();
-            ctx.translate(this.x + cos(this.rotation * this.speed) * 250, this.y);
-            ctx.rotate(this.rotation);
-            ctx.scale(this.smoothedScale * this.level, this.smoothedScale * this.level);
-            ctx.moveTo(this.size * 0.5, 0);
-            ctx.lineTo(this.size * -0.5, 0);
-            ctx.lineWidth = 1;
-            ctx.lineCap = 'round';
-            ctx.globalAlpha = this.smoothedAlpha / this.level;
-            ctx.strokeStyle = this.color;
-            ctx.stroke();
-            return ctx.restore();
-        };
         return Particle;
     }();
     Sketch.create({
@@ -191,23 +162,6 @@ var moodboard = function(url) {
             } else {
                 return warning.style.display = 'block';
             }
-        },
-        draw: function() {
-            var j, len, particle, ref, results;
-            this.globalCompositeOperation = 'lighter';
-            ref = this.particles;
-            results = [];
-            for (j = 0, len = ref.length; j < len; j++) {
-                particle = ref[j];
-                if (particle.y < -particle.size * particle.level * particle.scale * 2) {
-                    particle.reset();
-                    particle.x = random(this.width);
-                    particle.y = this.height + particle.size * particle.scale * particle.level;
-                }
-                particle.move();
-                results.push(particle.draw(this));
-            }
-            return results;
         }
     });
 }

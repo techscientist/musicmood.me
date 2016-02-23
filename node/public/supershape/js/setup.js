@@ -35,11 +35,11 @@
 	    renderer.shadowMapAutoUpdate = true;
 
 	    //STATS
-	    stats = new Stats();
-	    stats.domElement.style.position = 'absolute';
-	    stats.domElement.style.bottom = '0px';
-	    stats.domElement.style.right = '0px';
-	    document.getElementById("container").appendChild(stats.domElement);
+	    // stats = new Stats();
+	    // stats.domElement.style.position = 'absolute';
+	    // stats.domElement.style.bottom = '0px';
+	    // stats.domElement.style.right = '0px';
+	    // document.getElementById("container").appendChild(stats.domElement);
 
 	    // SCENE
 	    scene = new THREE.Scene();
@@ -120,7 +120,7 @@
 	function animate() {
 	    requestAnimationFrame(animate);
 	    render();
-	    stats.update();
+	    //stats.update();
 	}
 
 	function render() {

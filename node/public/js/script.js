@@ -34,7 +34,9 @@ $('#searchSong').submit(function(event) {
 
 initApp();
 
-// setInterval(function(){
-//     m2 = Math.floor(Math.random() * 20) + 0;
-//     object.update();
-// },100);
+function rotate() {
+    object.scene.rotation.y += 0.01;
+    setTimeout(rotate,100);
+}
+
+rotate();

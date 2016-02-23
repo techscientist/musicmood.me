@@ -2,7 +2,7 @@ body {
     padding: 0px;
     margin: 0px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-    border:0;
+    border: 0;
     overflow: hidden;
 }
 .logo {
@@ -12,37 +12,48 @@ body {
     margin-left: -100px;
     margin-top: -30px;
 }
-.starter-template{
+.starter-template {
     padding: 100px 15px;
     position: relative;
     z-index: 99;
 }
-
-.search{
-    position:absolute;
-    width:100%;
+.search {
+    position: absolute;
+    bottom: 60px;
+    width: 100%;
+    z-index: 2;
 }
-
-#container:before {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IiIgcj0iOTUlIj48c3RvcCBvZmZzZXQ9IjIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9Ijk1JSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-  background-size: 100%;
-  background-image: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0) 20%, #000000 95%);
-  background-image: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0) 20%, #000000 95%);
-  background-image: radial-gradient(ellipse cover at center, rgba(0, 0, 0, 0) 20%, #000000 95%);
-  position: absolute;
-  content: "";
-  z-index: 0;
-  opacity: 0.9;
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-}
-
 audio {
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  bottom: 0;
-  width:100%;
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+}
+#container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+    z-index: 0;
+}
+.info {
+    position: absolute;
+    top: 10px;
+    left: 310px;
+    overflow: hidden;
+    color: white;
+    font: 12px 'Lucida Grande', sans-serif;
+    width: 200px;
+    line-height: 20px;
+}
+.info a {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.dg.a, .dg.a .close-button {
+    width: 300px !important;
 }

@@ -1,6 +1,6 @@
 var moodboard = function(url) {
     var ALPHA, AudioAnalyser, COLORS, MP3_PATH, NUM_BANDS, NUM_PARTICLES, Particle, SCALE, SIZE, SMOOTHING, SPEED, SPIN;
-    NUM_PARTICLES = 150;
+    NUM_PARTICLES = 1;
     NUM_BANDS = 128;
     SMOOTHING = 0.5;
     MP3_PATH = url;
@@ -39,10 +39,10 @@ var moodboard = function(url) {
     ];
 
 
-    var element = document.getElementsByTagName("canvas");
-    for (index = element.length - 1; index >= 0; index--) {
-        element[index].parentNode.removeChild(element[index]);
-    }
+    // var element = document.getElementsByTagName("canvas");
+    // for (index = element.length - 1; index >= 0; index--) {
+    //     element[index].parentNode.removeChild(element[index]);
+    // }
     element = document.getElementsByTagName("audio");
     for (index = element.length - 1; index >= 0; index--) {
         element[index].parentNode.removeChild(element[index]);
@@ -175,6 +175,8 @@ var moodboard = function(url) {
                                 particle = ref1[k];
                                 results.push(particle.energy = bands[particle.band] / 256);
                             }
+                            m2 = results[0] * 20;
+                            object.update();
                             return results;
                         };
                     }(this);

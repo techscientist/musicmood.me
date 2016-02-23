@@ -22,7 +22,7 @@ $('#searchSong').submit(function(event) {
             console.log(data);
             var preview_url = data.preview_url;
             var color = data.mood.color;
-            $('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
+            //$('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
             moodboard(preview_url);
         },
         error: function(error) {
@@ -31,3 +31,10 @@ $('#searchSong').submit(function(event) {
     })
 });
 //moodboard('https://p.scdn.co/mp3-preview/23552502ef8477c882d6f2ae07e7579f38b8a92d');
+
+initApp();
+
+// setInterval(function(){
+//     m2 = Math.floor(Math.random() * 20) + 0;
+//     object.update();
+// },100);

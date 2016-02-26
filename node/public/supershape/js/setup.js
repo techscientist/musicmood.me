@@ -76,11 +76,11 @@
 	    // transparently support window resize
 	    THREEx.WindowResize.bind(renderer, camera);
 	    // allow 'p' to make screenshot
-	    THREEx.Screenshot.bindKey(renderer);
+	    // THREEx.Screenshot.bindKey(renderer);
 	    // allow 'f' to go fullscreen where this feature is supported'p' to make screenshot
-	    if (THREEx.FullScreen.available()) {
-	        THREEx.FullScreen.bindKey();
-	    }
+	    // if (THREEx.FullScreen.available()) {
+	    //     THREEx.FullScreen.bindKey();
+	    // }
 	}
 
 	function postprocessingApp() {

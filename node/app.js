@@ -27,7 +27,9 @@ app.engine('html', consolidate.swig);
 
 // home route
 app.get('/', (req, res) => {
-    res.render('index.html', {});
+    res.render('index.html', {
+        "moods": Moods.moods
+    });
 });
 
 // run app

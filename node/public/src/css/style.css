@@ -168,11 +168,11 @@ input[type="text"] {
     margin: 0 auto;
     width: 1130px;
     height: 80px;
-    background: #000;
+    background: none;
     color: #fff;
     border: none;
     text-transform: uppercase;
-    text-align: left;
+    text-align: center;
     font: 60px 'pragmatamedium', sans-serif;
 }
 input[type="text"]:focus {

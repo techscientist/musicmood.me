@@ -39,6 +39,8 @@ body, html {
 }
 .wrap {
     padding: 50px;
+    position: relative;
+    z-index: 2;
 }
 
 /* Header */
@@ -364,7 +366,7 @@ footer .spotifybrand img {
     max-width: 100%;
     margin: auto;
     /* background: #eee; */
-    overflow: auto;
+    overflow: hidden;;
     padding-right: 20px;
     mask: url(#masking);
     -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.5, black), color-stop(1, transparent));

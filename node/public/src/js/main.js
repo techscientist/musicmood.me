@@ -186,17 +186,59 @@ $('.songSearch').keyup(function() {
     $('.musiclist').html('');
     if (size > 3) {
         $.ajax({
-            url: 'https://api.spotify.com/v1/search?query='+encodeURIComponent(_this.val())+'&offset=0&limit=50&type=track',
+            url: 'https://api.spotify.com/v1/search?query=' + encodeURIComponent(_this.val()) + '&offset=0&limit=50&type=track',
             success: function(data) {
                 var items = data.tracks.items;
                 if (items.length > 0) {
-                    $('.musiclist').html('');
                     items.forEach(function(item) {
-                        var template = '<li><img src="'+item.album.images[0].url+'" alt="'+item.name+'"><span class="song">'+item.name+'</span><span>'+item.artists[0].name+'</span></li>';
+                        var template = '<li><img src="' + item.album.images[0].url + '" alt="' + item.name + '"><span class="song">' + item.name + '</span><span>' + item.artists[0].name + '</span></li>';
                         $('.musiclist').append(template);
                     });
                     $('.musiclist').addClass('show');
+                } else {
+                    $.ajax({
+                        url: 'https://jsonp.afeld.me/?url=https://itunes.apple.com/search?term=' + encodeURIComponent(_this.val()) + '&entity=musicTrack',
+                        complete: function(data) {
+                            var json = JSON.parse(data.responseText.replace('\\n', ''));
+                            if (json.resultCount > 0) {
+                                json.results.forEach(function(item) {
+                                    var template = '<li><img src="' + item.artworkUrl100 + '" alt="' + item.trackName + '"><span class="song">' + item.trackName + '</span><span>' + item.artistName + '</span></li>';
+                                    $('.musiclist').append(template);
+                                });
+                                $('.musiclist').addClass('show');
+                            }else{
+                                var template = '<li style="text-align:center"><span class="song">Sorry</span><span>Music Not Found</span></li>';
+                                $('.musiclist').append(template);
+                            }
+                            $('.musiclist').addClass('show');
+                        }
+                    })
                 }
+            }
+        })
+    }
+});
+
+$('.musiclist').on('click','li',function() {
+    var song = $(this).find('span').eq(0).text();
+    var artist = $(this).find('span').eq(1).text();
+    if (song !== 'Sorry' && artist !== 'Music Not Found') {
+        $.ajax({
+            url: '/get_song',
+            type: 'POST',
+            data: {
+                song: song,
+                artist: artist
+            },
+            success: function(data) {
+                console.log(data);
+                var preview_url = data.preview_url;
+                var color = data.mood.color;
+                //$('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
+                moodboard(preview_url);
+            },
+            error: function(error) {
+                console.log(error);
             }
         })
     }
@@ -210,31 +252,6 @@ function componentToHex(c) {
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
-
-$('#searchSong').submit(function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    var url = $(this).attr('action');
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            song: $('.song').val(),
-            artist: $('.artist').val()
-        },
-        success: function(data) {
-            console.log(data);
-            var preview_url = data.preview_url;
-            var color = data.mood.color;
-            //$('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
-            moodboard(preview_url);
-        },
-        error: function(error) {
-            console.log(error);
-        }
-    })
-});
-//moodboard('https://p.scdn.co/mp3-preview/23552502ef8477c882d6f2ae07e7579f38b8a92d');
 
 initApp();
 

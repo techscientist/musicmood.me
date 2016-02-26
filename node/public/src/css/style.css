@@ -148,6 +148,9 @@ h4 {
     padding-top: 15px;
     color: #4c4c4c;
 }
+.musicList li.notFound span {
+    text-align: center !important;
+}
 .musiclist::-webkit-scrollbar {
     width: 12px;
 }

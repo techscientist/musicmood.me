@@ -183,6 +183,7 @@ function moodScroll(index) {
 $('.songSearch').keyup(function() {
     var _this = $(this);
     var size = _this.val().length;
+    $('.musiclist').html('');
     if (size > 3) {
         $.ajax({
             url: 'https://api.spotify.com/v1/search?query='+encodeURIComponent(_this.val())+'&offset=0&limit=50&type=track',

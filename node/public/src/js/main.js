@@ -15,13 +15,13 @@ window.setTimeout(function() {
 // $(".songSearch").focusout(function() {
 //     $('.musiclist').removeClass('show').addClass('hide');
 // });
-$(".musiclist li").on('click', function() {
-    $('.music').removeClass('show').addClass('hide');
-    setTimeout(function() {
-        $('.moodfinal').addClass('show');
-        moodScroll(40).delay(300);
-    }, 500);
-});
+// $(".musiclist li").on('click', function() {
+//     $('.music').removeClass('show').addClass('hide');
+//     setTimeout(function() {
+//         $('.moodfinal').addClass('show');
+//         moodScroll(40).delay(300);
+//     }, 500);
+// });
 
 // Mood Scroller
 
@@ -85,7 +85,7 @@ function moodScroll(index) {
 
     $('#wrap-scroll').animate({
         scrollTop: $("#selectedmood").position().top - 60,
-    }, index * 200);
+    }, index * 50);
 
     if (index == 1) {
         $('#wrap-scroll').animate({
@@ -184,7 +184,7 @@ $('.songSearch').keyup(function() {
     var _this = $(this);
     var size = _this.val().length;
     $('.musiclist').html('');
-    if (size > 3) {
+    if (size >= 3) {
         $.ajax({
             url: 'https://api.spotify.com/v1/search?query=' + encodeURIComponent(_this.val()) + '&offset=0&limit=50&type=track',
             success: function(data) {
@@ -235,7 +235,10 @@ $('.musiclist').on('click','li',function() {
                 var preview_url = data.preview_url;
                 var color = data.mood.color;
                 //$('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
+                $('.music').removeClass('show').addClass('hide');
+                $('.moodfinal').addClass('show');
                 moodboard(preview_url);
+                moodScroll(data.mood.colorIndex);
             },
             error: function(error) {
                 console.log(error);

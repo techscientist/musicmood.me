@@ -64,7 +64,7 @@ var moodboard = function(url) {
                 this.audio.crossOrigin = 'anonymous';
                 this.audio.controls = true;
                 this.audio.src = src;
-                this.audio.loop = true;
+                //this.audio.loop = true;
             }
             this.context = new AudioAnalyser.AudioContext();
             this.jsNode = this.context.createScriptProcessor(2048, 1, 1);

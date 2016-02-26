@@ -1,5 +1,7 @@
 window.setTimeout(function() {
     $('.moods').addClass('hide');
+    color = rgbToHex(255, 255, 255);
+    object.update();
     $('.songSearch').addClass('hide');
     setTimeout(function() {
         $('.music').addClass('show');
@@ -7,7 +9,22 @@ window.setTimeout(function() {
     setTimeout(function() {
         $('.songSearch').addClass('show').removeClass('hide').delay(5000);
     }, 2200);
-}, 3000);
+}, 3500);
+
+setTimeout(function() {
+    color = rgbToHex(44, 251, 232);
+    object.update();
+}, 600);
+
+setTimeout(function() {
+    color = rgbToHex(56, 248, 67);
+    object.update();
+}, 1600);
+
+setTimeout(function() {
+    color = rgbToHex(42, 241, 252);
+    object.update();
+}, 2600);
 
 // $(".songSearch").focus(function() {
 //     $('.musiclist').addClass('show');
@@ -206,7 +223,7 @@ $('.songSearch').keyup(function() {
                                     $('.musiclist').append(template);
                                 });
                                 $('.musiclist').addClass('show');
-                            }else{
+                            } else {
                                 var template = '<li style="text-align:center"><span class="song">Sorry</span><span>Music Not Found</span></li>';
                                 $('.musiclist').append(template);
                             }
@@ -219,7 +236,7 @@ $('.songSearch').keyup(function() {
     }
 });
 
-$('.musiclist').on('click','li',function() {
+$('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
     var artist = $(this).find('span').eq(1).text();
     if (song !== 'Sorry' && artist !== 'Music Not Found') {
@@ -233,12 +250,18 @@ $('.musiclist').on('click','li',function() {
             success: function(data) {
                 console.log(data);
                 var preview_url = data.preview_url;
-                var color = data.mood.color;
-                //$('body').css("background-color", rgbToHex(color[0], color[1], color[2]));
+                var moodColor = data.mood.color;
+                var energy = data.mood.energy;
+                var valence = data.mood.valence;
+                a1 = (energy * 5) + 1;
+                //n21 = (valence*150)-50
+                color = rgbToHex(moodColor[0], moodColor[1], moodColor[2]);
+                object.update();
+                rotateTimeout = setTimeout(rotate, 60);
                 $('.music').removeClass('show').addClass('hide');
                 $('.moodfinal').addClass('show');
                 moodboard(preview_url);
-                moodScroll(data.mood.colorIndex);
+                moodScroll(data.mood.colorIndex - 2);
             },
             error: function(error) {
                 console.log(error);
@@ -247,20 +270,49 @@ $('.musiclist').on('click','li',function() {
     }
 });
 
+function getSoundAndFadeAudio(audiosnippetId) {
+
+    var sound = document.getElementById(audiosnippetId);
+
+    // Set the point in playback that fadeout begins. This is for a 2 second fade out.
+    var fadePoint = sound.duration - 2;
+
+    var fadeAudio = setInterval(function() {
+
+        // Only fade if past the fade out point or not at zero already
+        if ((sound.currentTime >= fadePoint) && (sound.volume != 0.0)) {
+            sound.volume -= 0.1;
+        }
+        // When volume at zero stop all the intervalling
+        if (sound.volume === 0.0) {
+            clearInterval(fadeAudio);
+        }
+    }, 200);
+
+}
+
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
 function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
-
 initApp();
 
+var rotateTimeout;
+
 function rotate() {
-    object.scene.rotation.y += 0.01;
-    setTimeout(rotate, 100);
+    object.scene.rotation.y += 0.02;
+    // if (object.scene.rotation.y > 6.28) {
+    //     object.scene.rotation.y = 0;
+    // }
+    if (object.scene.rotation.y < 3.14) {
+        rotateTimeout = setTimeout(rotate, 60);
+    }else{
+        object.scene.rotation.y = 0;
+    }
 }
 
 rotate();

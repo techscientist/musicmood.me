@@ -25,17 +25,6 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.engine('html', consolidate.swig);
 
-// home route
-app.get('/', (req, res) => {
-    res.render('index.html', {
-        "moods": Moods.moods
-    });
-});
-
-// run app
-app.listen(3000);
-
-
 // var lfm = new LastfmAPI({
 //     'api_key': tools.LASTFM_API_KEY,
 //     'secret': tools.LASTFM_API_SEC
@@ -46,6 +35,14 @@ app.listen(3000);
 //     secret: tools.LASTFM_API_SEC
 // });
 
+// home route
+app.get('/', (req, res) => {
+    res.render('index.html', {
+        "moods": Moods.moods.filter(function(value, index) { return index > 1 })
+    });
+});
+
+//ajax to process the songs
 app.post('/get_song', (req, res) => {
     var song = req.body.song;
     var artist = req.body.artist;
@@ -63,6 +60,10 @@ app.post('/get_song', (req, res) => {
             })
         })
 });
+
+// run app
+app.listen(3000);
+
 //
 // app.get('/login', (req, res) => {
 //     var authUrl = lfm.getAuthenticationUrl({

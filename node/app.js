@@ -25,15 +25,15 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.engine('html', consolidate.swig);
 
-// var lfm = new LastfmAPI({
-//     'api_key': tools.LASTFM_API_KEY,
-//     'secret': tools.LASTFM_API_SEC
-// });
-//
-// var lastfm = new LastFmNode({
-//     api_key: tools.LASTFM_API_KEY,
-//     secret: tools.LASTFM_API_SEC
-// });
+var lfm = new LastfmAPI({
+    'api_key': tools.LASTFM_API_KEY,
+    'secret': tools.LASTFM_API_SEC
+});
+
+var lastfm = new LastFmNode({
+    api_key: tools.LASTFM_API_KEY,
+    secret: tools.LASTFM_API_SEC
+});
 
 // home route
 app.get('/', (req, res) => {

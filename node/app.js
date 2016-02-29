@@ -38,7 +38,9 @@ var lastfm = new LastFmNode({
 // home route
 app.get('/', (req, res) => {
     res.render('index.html', {
-        "moods": Moods.moods.filter(function(value, index) { return index > 1 })
+        "moods": Moods.moods.filter(function(value, index) {
+            return index > 1
+        })
     });
 });
 
@@ -49,7 +51,10 @@ app.post('/get_song', (req, res) => {
     tools.searchSong(song, artist)
         .then((info) => {
             res.json({
-                "mood": Moods.NearestFeeling({"energy":info.energy, "valence":info.valence}),
+                "mood": Moods.NearestFeeling({
+                    "energy": info.energy,
+                    "valence": info.valence
+                }),
                 "preview_url": info.preview_url
             });
         })
@@ -67,12 +72,15 @@ app.get('/mood/:artist/:song/', (req, res) => {
     var artist = req.params.artist;
     tools.searchSong(song, artist)
         .then((info) => {
-            var mood = Moods.NearestFeeling({"energy":info.energy, "valence":info.valence});
+            var mood = Moods.NearestFeeling({
+                "energy": info.energy,
+                "valence": info.valence
+            });
             res.json({
                 "error": false,
                 "mood": mood.mood,
                 "color": mood.color
-                //"preview_url": info.preview_url
+                    //"preview_url": info.preview_url
             });
         })
         .catch((error) => {

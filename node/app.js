@@ -61,6 +61,28 @@ app.post('/get_song', (req, res) => {
         })
 });
 
+//ajax to process the songs
+app.get('/mood/:artist/:song/', (req, res) => {
+    var song = req.params.song;
+    var artist = req.params.artist;
+    tools.searchSong(song, artist)
+        .then((info) => {
+            var mood = Moods.NearestFeeling({"energy":info.energy, "valence":info.valence});
+            res.json({
+                "error": false,
+                "mood": mood.mood,
+                "color": mood.color
+                //"preview_url": info.preview_url
+            });
+        })
+        .catch((error) => {
+            res.json({
+                "error": true,
+                "msg": "Artist/Song could not be found."
+            })
+        })
+});
+
 // run app
 app.listen(3000);
 

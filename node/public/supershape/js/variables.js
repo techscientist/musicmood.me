@@ -11,7 +11,7 @@ var renderer = null,
     rotX = 0,
     rotY = 0,
     opac = 1,
-    backgroundColor = "0x202020",
+    backgroundColor = "0x000000",
     object, geometry, guiElement, stats;
 	DEPTH = 600, NEAR = 1, FAR = 4000, VIEW_ANGLE = 45;
 

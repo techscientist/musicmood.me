@@ -176,13 +176,13 @@ input[type="text"] {
     display: block;
     width: 100%;
     margin: 0 auto;
-    width: 1130px;
+    max-width: 1130px;
     height: 80px;
     background: none;
     color: #fff;
     border: none;
     text-transform: uppercase;
-    text-align: center;
+    text-align: left;
     font: 60px 'pragmatamedium', sans-serif;
 }
 input[type="text"]:focus {
@@ -425,4 +425,10 @@ audio {
     right: 0px;
     overflow: hidden;
     z-index: 0;
+}
+
+canvas {
+    opacity: 0.6;
+    margin-left: -35px;
+    margin-top: -15px;
 }

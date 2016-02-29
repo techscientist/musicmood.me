@@ -293,7 +293,6 @@ function volume() {
         if (sound.currentTime > 25) {
             sound.volume = abs(((sound.currentTime-25)/5)-1);
         }
-        console.log(sound.volume, sound.duration, sound.currentTime);
     }
     setTimeout(volume, 100);
 }

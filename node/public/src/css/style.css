@@ -117,7 +117,7 @@ h4 {
     font-size: 15px;
     text-transform: initial;
     text-align: center;
-    margin-bottom: 120px;
+    margin-bottom: 80px;
 }
 .musiclist {
     width: 800px;
@@ -177,16 +177,21 @@ input[type="text"] {
     width: 100%;
     margin: 0 auto;
     max-width: 1130px;
-    height: 80px;
+    height: 75px;
     background: none;
     color: #fff;
     border: none;
     text-transform: uppercase;
     text-align: left;
-    font: 60px 'pragmatamedium', sans-serif;
+    font: 50px 'pragmatamedium', sans-serif;
 }
 input[type="text"]:focus {
     outline: none;
+    background: rgba(64, 64, 64, 0.4);
+    transition: all 500ms;
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -o-transition: all 500ms;
 }
 ::-webkit-input-placeholder {
     /* Chrome/Opera/Safari */
@@ -360,7 +365,8 @@ footer .spotifybrand img {
     overflow: hidden;
     max-width: 100%;
     margin: auto;
-    top: -120px;
+    top: -60px;
+    left: 10px;
     position: relative;
     min-height: 200px;
 }

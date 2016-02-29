@@ -270,26 +270,34 @@ $('.musiclist').on('click', 'li', function() {
     }
 });
 
-function getSoundAndFadeAudio(audiosnippetId) {
+$('.start').click(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('.songSearch').val('');
+    $('audio').remove();
+    rotate();
+    color = '0xffffff';
+    object.update();
+    moodScroll(0);
+    $('.musiclist').removeClass('show').addClass('hide');
+    $('.moodfinal').removeClass('show').addClass('hide');
+    $('.music').removeClass('hide').addClass('show')
+});
 
-    var sound = document.getElementById(audiosnippetId);
-
-    // Set the point in playback that fadeout begins. This is for a 2 second fade out.
-    var fadePoint = sound.duration - 2;
-
-    var fadeAudio = setInterval(function() {
-
-        // Only fade if past the fade out point or not at zero already
-        if ((sound.currentTime >= fadePoint) && (sound.volume != 0.0)) {
-            sound.volume -= 0.1;
+function volume() {
+    var sound = document.getElementById("audio_player");
+    if (sound) {
+        if (sound.currentTime < 5) {
+            sound.volume = sound.currentTime/5;
         }
-        // When volume at zero stop all the intervalling
-        if (sound.volume === 0.0) {
-            clearInterval(fadeAudio);
+        if (sound.currentTime > 25) {
+            sound.volume = abs(((sound.currentTime-25)/5)-1);
         }
-    }, 200);
-
+        console.log(sound.volume, sound.duration, sound.currentTime);
+    }
+    setTimeout(volume, 100);
 }
+volume();
 
 function componentToHex(c) {
     var hex = c.toString(16);

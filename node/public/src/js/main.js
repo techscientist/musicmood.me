@@ -294,7 +294,7 @@ $('.songSearch').keyup(function() {
     var _this = $(this);
     var size = _this.val().length;
     $('.musiclist').html('');
-    if (size >= 3) {
+    if (size >= 3 && _this.val() !== 'Processing...') {
         $.ajax({
             url: 'https://api.spotify.com/v1/search?query=' + encodeURIComponent(_this.val()) + '&offset=0&limit=50&type=track',
             success: function(data) {
@@ -333,6 +333,8 @@ $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
     var artist = $(this).find('span').eq(1).text();
     if (song !== 'Sorry' && artist !== 'Music Not Found') {
+        $('.musiclist').removeClass('show').addClass('hide');
+        $('.songSearch').val('Processing...');
         $.ajax({
             url: '/get_song',
             type: 'POST',
@@ -432,4 +434,3 @@ $("#trigger-overlay").click(function(){
 $(".overlay-close").click(function(){
     $(".overlay-scale").toggleClass("open");
 });
-

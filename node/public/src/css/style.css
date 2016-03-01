@@ -541,16 +541,19 @@ canvas {
 }
 
 .overlay-close:hover::before , .overlay-close:hover::after{
-    background: #784533;
+    background: #636363;
+    -webkit-transform:scale(0.5); /* prefixo para browsers webkit */
+    -moz-transform:scale(0.5); /* prefixo para browsers gecko */
+    -o-transform:scale(0.5); /* prefixo para opera */
+    transform:scale(0.5);
 }
 
 .about,
 .language {
     position: absolute;
     top: 18px;
-    color: #cba294;
+    color: #636363;
     font-size: 0.9em;
-    font-family:'ProximaNova-Regular';
 }
 
 .about {right: 18px; }
@@ -573,7 +576,7 @@ canvas {
 }
 
 .readme p {
-    color: #202020;
+    color: #636363;
     line-height: 1.6em;
 }
 
@@ -581,7 +584,7 @@ canvas {
 .readme p a { color: #464646; position: relative;
 text-decoration: none; }
 
-.about a:before, .readme a:before {
+a:before {
     content: '';
     display: block;
     position: absolute;
@@ -591,7 +594,7 @@ text-decoration: none; }
     width: 100%;
     transition: width 100ms ease-out;
 }
-.about a:after, .readme a:after {
+a:after {
     content: '';
     display: block;
     position: absolute;
@@ -602,12 +605,12 @@ text-decoration: none; }
     background: #464646;
     transition: width .5s ease-out;
 }
-.about a:hover:before, .readme a:hover:before {
+a:hover:before {
     width: 0%;
     background: #464646;
     transition: width .5s ease-out;
 }
-.about a:hover:after, .readme a:hover:after {
+a:hover:after {
     width: 0%;
     background: transparent;
     transition: width 0s ease-out;

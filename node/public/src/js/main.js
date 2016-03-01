@@ -1,3 +1,96 @@
+function Ticker( elem ) {
+    elem.lettering();
+    this.done = false;
+    this.cycleCount = 5;
+    this.cycleCurrent = 0;
+    this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+{}|[]\\;\':"<>?,./`~'.split('');
+    this.charsCount = this.chars.length;
+    this.letters = elem.find( 'span' );
+    this.letterCount = this.letters.length;
+    this.letterCurrent = 0;
+
+    this.letters.each( function() {
+        var $this = $( this );
+        $this.attr( 'data-orig', $this.text() );
+        $this.text( '-' );
+    });
+}
+
+Ticker.prototype.getChar = function() {
+    return this.chars[ Math.floor( Math.random() * this.charsCount ) ];
+};
+
+Ticker.prototype.reset = function() {
+    this.done = false;
+    this.cycleCurrent = 0;
+    this.letterCurrent = 0;
+    this.letters.each( function() {
+        var $this = $( this );
+        $this.text( $this.attr( 'data-orig' ) );
+        $this.removeClass( 'done' );
+    });
+    this.loop();
+};
+
+Ticker.prototype.loop = function() {
+    var self = this;
+
+    this.letters.each( function( index, elem ) {
+        var $elem = $( elem );
+        if( index >= self.letterCurrent ) {
+            if( $elem.text() !== ' ' ) {
+                $elem.text( self.getChar() );
+                $elem.css( 'opacity', Math.random() );
+            }
+        }
+    });
+
+    if( this.cycleCurrent < this.cycleCount ) {
+        this.cycleCurrent++;
+    } else if( this.letterCurrent < this.letterCount ) {
+        var currLetter = this.letters.eq( this.letterCurrent );
+        this.cycleCurrent = 0;
+        currLetter.text( currLetter.attr( 'data-orig' ) ).css( 'opacity', 1 ).addClass( 'done' );
+        this.letterCurrent++;
+    } else {
+        this.done = true;
+    }
+
+    if( !this.done ) {
+        requestAnimationFrame( function() {
+            self.loop();
+        });
+    } else {
+        setTimeout( function() {
+            self.reset();
+        }, 15000 );
+    }
+};
+
+$fmood = $( '.firstmood' );
+$smood = $( '.secondmood' );
+$tmood = $( '.thirthmood' );
+
+$fmood.each( function() {
+    var $this = $( this ),
+        ticker = new Ticker( $this ).reset();
+    $this.data( 'ticker', ticker  );
+});
+setTimeout(function() {
+    $smood.each( function() {
+    var $this = $( this ),
+        ticker = new Ticker( $this ).reset();
+    $this.data( 'ticker', ticker  );
+    });
+}, 2300);
+setTimeout(function() {
+    $tmood.each( function() {
+    var $this = $( this ),
+        ticker = new Ticker( $this ).reset();
+    $this.data( 'ticker', ticker  );
+    });
+}, 4300);
+
 window.setTimeout(function() {
     $('.moods').addClass('hide');
     color = rgbToHex(255, 255, 255);
@@ -9,22 +102,22 @@ window.setTimeout(function() {
     setTimeout(function() {
         $('.songSearch').addClass('show').removeClass('hide').delay(5000);
     }, 2200);
-}, 3500);
+}, 5500);
 
 setTimeout(function() {
     color = rgbToHex(44, 251, 232);
     object.update();
-}, 600);
+}, 400);
 
 setTimeout(function() {
     color = rgbToHex(56, 248, 67);
     object.update();
-}, 1600);
+}, 2500);
 
 setTimeout(function() {
     color = rgbToHex(42, 241, 252);
     object.update();
-}, 2600);
+}, 4500);
 
 // $(".songSearch").focus(function() {
 //     $('.musiclist').addClass('show');
@@ -323,3 +416,14 @@ function rotate() {
 }
 
 rotate();
+
+function resize()
+{
+    $(".wrap").height($(window).height());
+}
+resize();
+window.onload = window.onresize = function() {
+    resize();
+};
+
+

@@ -55,7 +55,6 @@
 </head>
 
 <body>
-    <div id="container"></div>
     <div class="wrap">
         <header>
             <a href="#" class="logo">D3.do</a>
@@ -63,9 +62,9 @@
         </header>
         <div class="main">
             <section class="moods">
-                <h3 class="show">Quiet?</h3>
-                <h3 class="show">Peaceful?</h3>
-                <h3 class="show">Cool?</h3>
+                <h3 class="show firstmood">Quiet?</h3>
+                <h3 class="show secondmood">Peaceful?</h3>
+                <h3 class="show thirthmood">Cool?</h3>
             </section>
             <section class="music">
                 <h4>Translate your music into a mood.</h4>
@@ -109,8 +108,9 @@
             </div>
         </footer>
     </div>
+    <div id="container"></div>
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
-
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.6.1/jquery.lettering.min.js'></script>
     <script src='/src/js/sketch.min.js'></script>
     <script src="/supershape/lib/dat.gui.min.js"></script>
     <script src="/supershape/lib/three.js/Three.js"></script>

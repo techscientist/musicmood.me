@@ -40,12 +40,8 @@ body, html {
 .wrap {
     padding: 50px;
     position: relative;
-<<<<<<< HEAD
-    z-index: 2;
-=======
     z-index: 99999;
     height: 800px;
->>>>>>> View z-index adjust
 }
 
 /* Header */
@@ -86,15 +82,20 @@ header a:hover {
 .moods h3 {
     opacity: 0;
 }
-.moods h3:nth-child(2n) {
-    -webkit-animation-delay: 1.5s;
+.moods h3:nth-child(1n) {
+    -webkit-animation-delay: 1s;
     /* Chrome, Safari, Opera */
-    animation-delay: 1.5s;
+    animation-delay: 1s;
+}
+.moods h3:nth-child(2n) {
+    -webkit-animation-delay: 3.5s;
+    /* Chrome, Safari, Opera */
+    animation-delay: 3.5s;
 }
 .moods h3:nth-child(3n) {
-    -webkit-animation-delay: 2.5s;
+    -webkit-animation-delay: 4.5s;
     /* Chrome, Safari, Opera */
-    animation-delay: 2.5s;
+    animation-delay: 5.5s;
 }
 input {
     -webkit-animation-delay: 2.5s;
@@ -153,7 +154,13 @@ h4 {
 .musiclist li .song {
     font-size: 25px;
     padding-top: 15px;
+    max-width: 678px;
     color: #4c4c4c;
+    text-overflow: ellipsis;
+    width: 778px;
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .musicList li.notFound span {
     text-align: center !important;

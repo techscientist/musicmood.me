@@ -426,4 +426,10 @@ window.onload = window.onresize = function() {
     resize();
 };
 
+$("#trigger-overlay").click(function(){
+    $(".overlay-scale").toggleClass("open");
+});
+$(".overlay-close").click(function(){
+    $(".overlay-scale").toggleClass("open");
+});
 

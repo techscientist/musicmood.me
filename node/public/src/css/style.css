@@ -542,10 +542,6 @@ canvas {
 
 .overlay-close:hover::before , .overlay-close:hover::after{
     background: #636363;
-    -webkit-transform:scale(0.5); /* prefixo para browsers webkit */
-    -moz-transform:scale(0.5); /* prefixo para browsers gecko */
-    -o-transform:scale(0.5); /* prefixo para opera */
-    transform:scale(0.5);
 }
 
 .about,
@@ -584,7 +580,7 @@ canvas {
 .readme p a { color: #464646; position: relative;
 text-decoration: none; }
 
-a:before {
+.about a:before, .readme a:before {
     content: '';
     display: block;
     position: absolute;
@@ -594,7 +590,7 @@ a:before {
     width: 100%;
     transition: width 100ms ease-out;
 }
-a:after {
+.about a:after, .readme a:after {
     content: '';
     display: block;
     position: absolute;
@@ -605,12 +601,12 @@ a:after {
     background: #464646;
     transition: width .5s ease-out;
 }
-a:hover:before {
+.about a:hover:before, .readme a:hover:before {
     width: 0%;
     background: #464646;
     transition: width .5s ease-out;
 }
-a:hover:after {
+.about a:hover:after, .readme a:hover:after {
     width: 0%;
     background: transparent;
     transition: width 0s ease-out;

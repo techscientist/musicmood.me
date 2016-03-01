@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var LastFmNode = require('lastfm').LastFmNode;
 var tools = require('./lib/tools');
 var Moods = require('./lib/moods');
-var mongo = require('mongodb').MongoClient;
+var mongo = require('./lib/mongo').initPool();
 
 app.get('/', (req, res) => {
     res.sendfile('views/socket.html');
@@ -19,16 +19,17 @@ var lastfm = new LastFmNode({
         api_key: tools.LASTFM_API_KEY,
         secret: tools.LASTFM_API_SEC
     }),
+    main_index = -1,
     harper, total, duration;
 
-var ProcessUser = function(user, index, beats, track, harper, socketServer, mood) {
+var ProcessUser = function(user, index, track, harper, mood) {
 
     this.user = user;
     this.index = index;
-    this.beats = beats;
+    this.beats = tools.BEATS_PER_SECOND;
     this.track = track;
     this.harper = harper;
-    this.socket = socketServer;
+    this.socket = io;
     this.interval = undefined;
     this.mood = mood;
     this.playing = false;
@@ -38,7 +39,8 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
         u: user
     });
     this._init = () => {
-        console.log('\x1b[33m', `${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`, '\x1b[0m');
+        var date = new Date().toJSON();
+        console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[33m', `${this.user}: INIT (${_this.track.artist['#text']} - ${_this.track.name})`, '\x1b[0m');
         var mood = Moods.NearestFeeling(_this.mood);
         //send a change color to the queue
         _this.socket.emit('queue', {
@@ -47,7 +49,7 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             p: 0
         })
         _this.repeat = function() {
-            if (_this.harper.length > 0) {
+            if (_this.harper.length > 0 && _this.playing) {
                 var eq = _this.harper[0],
                     percent = (100 * eq / 1000).toFixed(0),
                     buffer = '';
@@ -77,7 +79,8 @@ var ProcessUser = function(user, index, beats, track, harper, socketServer, mood
             u: user
         });
         _this.playing = false;
-        console.log('\x1b[33m', `${this.user}: FINISH`, '\x1b[0m');
+        var date = new Date().toJSON();
+        console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[33m', `${this.user}: FINISH`, '\x1b[0m');
     }
 
 }
@@ -100,48 +103,60 @@ function dumpError(err) {
 
 function stopUser(user, why) {
     if (user in processList) {
-        processList[user]._finish();
-        delete processList[user];
-        io.emit('finish', {
-            u: user
-        });
+        if (processList[user].playing) {
+            processList[user]._finish();
+            //delete processList[user];
+            io.emit('finish', {
+                u: user
+            });
+        }
     }
-    console.log('\x1b[36m', `${user}: ${why}`, '\x1b[0m');
+    var date = new Date().toJSON();
+    console.log(date.slice(0, 10), date.slice(11, 23), '\x1b[36m', `${user}: ${why}`, '\x1b[0m');
+}
+
+function initUser(user, track, main_index, harper, mood) {
+    processList[user] = new ProcessUser(user, main_index, track, harper, {
+        "energy": mood.energy,
+        "valence": mood.valence
+    });
+    processList[user].playing = true;
+    processList[user]._init();
 }
 
 function processTrack(track, user) {
     if (user in processList && processList[user].playing && track.name === processList[user].track.name) {
-        console.log(user + ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
+        var date = new Date().toJSON();
+        console.log(date.slice(0, 10), date.slice(11, 23), user, ':\x1b[32m RUNNING (' + processList[user].track.name + ') \x1b[0m');
     } else {
         tools.processTrack(track, user)
             .then((info) => {
                 harper = info.harper;
                 total = harper.length;
                 duration = info.duration;
+                mood = {
+                    "energy": info.energy,
+                    "valence": info.valence
+                }
 
-                mongo.connect(tools.MONGO_SERVER, (err, db) => {
-                    if (!err) {
-                        var find = db.collection('users')
-                            .findOne({
-                                username: user
-                            }, (err, item) => {
-                                if (user in processList) {
-                                    if (processList[user].track.name !== track.name) {
-                                        stopUser(user, 'NEW_SONG');
-                                    }
+                mongo.getInstance((db) => {
+                    db.collection('users')
+                        .findOne({
+                            username: user
+                        }, (err, item) => {
+                            if (user in processList) {
+                                if (processList[user].track.name !== track.name) {
+                                    stopUser(user, 'NEW_SONG');
+                                    initUser(user, track, processList[user].index, harper, mood);
                                 } else {
-                                    processList[user] = new ProcessUser(user, parseInt(item.index), tools.BEATS_PER_SECOND, track, harper, io, {
-                                        "energy": info.energy,
-                                        "valence": info.valence
-                                    });
-                                    processList[user]._init();
+                                    //we do not have to do anything, the song is playing
                                 }
-                                db.close();
-                                return Promise.resolve();
-                            });
-                    } else {
-                        return Promise.reject(err);
-                    }
+                            } else {
+                                main_index += 1;
+                                initUser(user, track, main_index, harper, mood);
+                            }
+                            return Promise.resolve();
+                        });
                 });
 
             })
@@ -169,17 +184,12 @@ function initNewUser(username) {
 }
 
 function initVisualization() {
-    mongo.connect(tools.MONGO_SERVER, (err, db) => {
-        if (!err) {
-            var find = db.collection('users')
-                .find({})
-                .forEach((element) => {
-                    initNewUser(element.username);
-                    db.close();
-                });
-        } else {
-            console.log(err);
-        }
+    mongo.getInstance((db) => {
+        db.collection('users')
+            .find({})
+            .forEach((element) => {
+                initNewUser(element.username);
+            });
     });
 }
 

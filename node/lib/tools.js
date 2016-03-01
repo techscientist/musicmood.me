@@ -16,8 +16,10 @@ var ECHONEST_API_KEY = config.ECHONEST_API_KEY,
     socket_server = undefined;
 
 if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
+    // localhost inside vagrant
     socket_server = 'http://localhost';
 } else {
+    // vagrant private IP
     socket_server = 'http://192.168.33.10';
 }
 

@@ -1,9 +1,7 @@
-// 3rd party
 var express = require('express');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 var consolidate = require('consolidate');
-
 var tools = require('./lib/tools');
 var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
@@ -80,7 +78,8 @@ app.get('/mood/:artist/:song/', (req, res) => {
                 "error": false,
                 "mood": mood.mood,
                 "color": mood.color
-                    //"preview_url": info.preview_url
+                // if you need, you can send the preview url too
+                // "preview_url": info.preview_url
             });
         })
         .catch((error) => {
@@ -91,44 +90,55 @@ app.get('/mood/:artist/:song/', (req, res) => {
         })
 });
 
-// run app
-app.listen(3000);
+app.get('/login', (req, res) => {
+    var authUrl = lfm.getAuthenticationUrl({
+        'cb': req.protocol + '://' + req.get('host') + '/auth'
+    });
+    res.render('login.html', {
+        title: 'Login Last.FM',
+        url: authUrl
+    });
+});
 
-//
-// app.get('/login', (req, res) => {
-//     var authUrl = lfm.getAuthenticationUrl({
-//         'cb': req.protocol + '://' + req.get('host') + '/auth'
-//     });
-//     res.locals = {
-//         title: 'Login Last.FM',
-//         url: authUrl
-//     }
-//     res.render('login');
-// });
-//
+app.get('/auth', (req, res) => {
+    token = url.parse(req.url, true).query.token;
+    var session = lastfm.session({
+        token: token,
+        handlers: {
+            success: (session) => {
+                tools.newUser(session)
+                    .then((result) => {
+                        client.emit('new_user', result.ops[0].username);
+                        res.redirect('/login');
+                    }).catch((err) => {
+                        console.log(err);
+                        res.redirect('/login');
+                    });
+            },
+            error: (err) => {
+                console.log(err);
+            }
+        }
+    });
+});
+
+// admin interface
 // app.get('/admin', (req, res) => {
 //     mongo.getInstance((db) => {
 //         db.collection('users').find({}).toArray((err, items) => {
 //             if (!err) {
-//                 res.locals = {
+//                 res.render('admin', {
 //                     title: 'Update User Fields Last.FM',
 //                     users: items
-//                 }
-//                 res.render('admin');
+//                 });
 //             } else {
 //                 console.log(err);
 //             }
 //         });
 //     });
 // });
-//
-// app.get('/colors', (req, res) => {
-//     res.locals = {
-//         moods: Moods.moods
-//     }
-//     res.render('colors');
-// });
-//
+
+// update user
 // app.post('/update', (req, res) => {
 //     var name = req.body.name,
 //         mac_address = req.body.mac_address,
@@ -148,25 +158,6 @@ app.listen(3000);
 //         res.redirect('/admin')
 //     });
 // });
-//
-// app.get('/auth', (req, res) => {
-//     token = url.parse(req.url, true).query.token;
-//     var session = lastfm.session({
-//         token: token,
-//         handlers: {
-//             success: (session) => {
-//                 tools.newUser(session)
-//                     .then((result) => {
-//                         client.emit('new_user', result.ops[0].username);
-//                         res.redirect('/login');
-//                     }).catch((err) => {
-//                         console.log(err);
-//                         res.redirect('/login');
-//                     });
-//             },
-//             error: (err) => {
-//                 console.log(err);
-//             }
-//         }
-//     });
-// });
+
+// run app
+app.listen(3000);

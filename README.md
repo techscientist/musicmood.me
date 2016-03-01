@@ -29,7 +29,7 @@ You can get the keys [here](http://www.last.fm/api/account/create) and [here](ht
 
 For development, we recomend [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 
-Afer, go to the project folder and run:
+After, go to the project folder and run:
 
 ```
 ~$ vagrant up
@@ -47,7 +47,19 @@ Now, inside the machine, go to `/vagrant` (this is the project root shared folde
 ~$ cd /vagrant && sudo sh setup.sh
 ```
 
-If god is with you and everything works, this will install and configure all the packages you need to run this repo. If you ran into any problem, feel free to send a letter to [my@musicmood.me](mailto:my@musicmood.me). You can look the file `setup.sh` to adapt it to your system (if not using `vagrant`).
+If god is with you and everything works, this will install and configure all the packages you need to run this repo. If you ran into any problem, feel free to `send a pull request` or `open an issue`. You can look the source of `setup.sh` to adapt it to your system (if you are not using `vagrant`).
+
+If you do not run on `vagrant`, you may need to configure these lines on `node/lib/tools.js`
+
+```javascript
+if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
+    // localhost inside vagrant
+    socket_server = 'http://localhost';
+} else {
+    // vagrant private IP
+    socket_server = 'http://192.168.33.10';
+}
+```
 
 ## Running
 
@@ -73,6 +85,8 @@ This is just an example of the websocket connection and use of the data sent ove
 
 This little guy will give you a web interface (as seen [here](http://musicmood.me)) to try and experiment our mood tool. To use as a real-time visualization, head to [login](http://localhost:3000/login) and create at least one account (the log will show up on `extractor.js`)
 
+> We have some commented lines on app.js, so you can take a look at a little admin panel to manage the last.fm users (just uncomment).
+
 So, you just need to (processor.js and app.js only if you need to):
 
 ```
@@ -87,7 +101,7 @@ So, you just need to (processor.js and app.js only if you need to):
 
 ## API
 
-If you just need to use the moods, and do not want to get your hands dirty, we have an API just for you. Just make a `GET` request to (we made `GET` to help on cache `crossdomain` problems):
+If you just need to use the moods, and do not want to get your hands dirty, we have an API just for you.  Just make a `GET` request to (we made it `GET` to help on `crossdomain` problems):
 
 ```
 GET http://api.musicmood.me/mood/{artist}/{song}/
@@ -106,8 +120,8 @@ $.ajax({
 
 ## Hardware
 
-Soon. More info [here](http://d3.do/?p=xpto)
+Soon (how to and what we have done here at [d3.do](http://d3.do))
 
 ## TODO
 
-Soon.
+- Create a TODO list

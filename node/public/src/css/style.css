@@ -44,6 +44,15 @@ body, html {
     height: 800px;
 }
 
+/* Last.fm Login */
+.lastlogo {
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left:-150px;
+    margin-top:-113px;
+}
+
 /* Header */
 
 header {

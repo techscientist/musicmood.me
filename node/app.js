@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 var consolidate = require('consolidate');
+var ua = require('universal-analytics');
 var tools = require('./lib/tools');
 var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
@@ -33,6 +34,8 @@ var lastfm = new LastFmNode({
     secret: tools.LASTFM_API_SEC
 });
 
+var visitor = ua('UA-74495247-1');
+
 // home route
 app.get('/', (req, res) => {
     res.render('index.html', {
@@ -62,6 +65,7 @@ app.post('/get_song', (req, res) => {
                 "msg": error
             })
         })
+    visitor.event("Backend", "get_song", "Song", artist + ' ' + song).send()
 });
 
 //ajax to process the songs
@@ -78,8 +82,8 @@ app.get('/mood/:artist/:song/', (req, res) => {
                 "error": false,
                 "mood": mood.mood,
                 "color": mood.color
-                // if you need, you can send the preview url too
-                // "preview_url": info.preview_url
+                    // if you need, you can send the preview url too
+                    // "preview_url": info.preview_url
             });
         })
         .catch((error) => {
@@ -88,6 +92,7 @@ app.get('/mood/:artist/:song/', (req, res) => {
                 "msg": "Artist/Song could not be found."
             })
         })
+    visitor.event("Backend", "api_mood", "Song", artist + ' ' + song).send()
 });
 
 app.get('/login', (req, res) => {

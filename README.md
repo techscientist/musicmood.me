@@ -11,7 +11,7 @@ Whenever we make a choice, regarding music, we are creating an statement: when w
 
 As in all forms of representation, we believe that when the music unveils the feeling, it is supposed to emphasize the object in matter: How do you feel? So here comes our idea of highlighting the relation between music and moods. And how to translate that into the world.
 
-**If you are looking for our API, head to [API](#api).**
+**If you are looking for our API, head to [API](#API).**
 
 ## Installing
 
@@ -21,7 +21,7 @@ First, you need to create a `config.json` file in the root of the `node` folder 
 {
     "ECHONEST_API_KEY": "",
     "LASTFM_API_KEY": "",
-    "LASTFM_API_SEC": "",
+    "LASTFM_API_SEC": ""
 }
 ```
 

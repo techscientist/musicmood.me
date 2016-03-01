@@ -4,8 +4,9 @@ var execSync = require('child_process').execSync;
 var rs = require('request-promise');
 var mongo = require('./mongo').initPool();
 var os = require('os');
+var config = require('../config.json');
 
-var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
+var ECHONEST_API_KEY = config.ECHONEST_API_KEY,
     duration = 0,
     fileType = 'mp3',
     beats_per_second = 50,
@@ -17,7 +18,7 @@ var ECHONEST_API_KEY = 'DJQBV7G7ZFUC7CZAZ',
 if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
     socket_server = 'http://localhost';
 } else {
-    socket_server = 'http://10.0.1.42';
+    socket_server = 'http://192.168.33.10';
 }
 
 function slugify(text) {
@@ -98,8 +99,8 @@ function createTrack(info) {
 }
 
 module.exports = {
-    LASTFM_API_KEY: '7d0a3a11116a3f166a5b71674e825355',
-    LASTFM_API_SEC: '3d49048d35673db025c60e3062f5a57d',
+    LASTFM_API_KEY: config.LASTFM_API_KEY,
+    LASTFM_API_SEC: config.LASTFM_API_SEC,
     BEATS_PER_SECOND: beats_per_second,
     SOCKET_SERVER: socket_server,
     SOCKET_PORT: socket_port,

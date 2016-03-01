@@ -283,13 +283,6 @@ function moodScroll(index) {
     }
 }
 
-
-
-// if ($('.moodfinal').hasClass('show')) {
-//     // moodScroll(4);
-//     alert('TEM A CLASSE');
-// };
-
 $('.songSearch').keyup(function() {
     var _this = $(this);
     var size = _this.val().length;
@@ -343,7 +336,6 @@ $('.musiclist').on('click', 'li', function() {
                 artist: artist
             },
             success: function(data) {
-                console.log(data);
                 var preview_url = data.preview_url;
                 var moodColor = data.mood.color;
                 var energy = data.mood.energy;
@@ -407,9 +399,6 @@ var rotateTimeout;
 
 function rotate() {
     object.scene.rotation.y += 0.02;
-    // if (object.scene.rotation.y > 6.28) {
-    //     object.scene.rotation.y = 0;
-    // }
     if (object.scene.rotation.y < 3.14) {
         rotateTimeout = setTimeout(rotate, 60);
     }else{

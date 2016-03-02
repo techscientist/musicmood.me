@@ -125,17 +125,3 @@ Soon (how to and what we have done here at [d3.do](http://d3.do))
 ## TODO
 
 - Create a TODO list
-
-## Contributors
-
-[Andre Biagioni](https://github.com/andrebla)
-
-[Brenda Colautti](#)
-
-[Carol Nishino](#)
-
-[Jonathan Querubina](https://github.com/chr0nu5)
-
-[Junior Magalhães](https://dribbble.com/juniormag2)
-
-[Nathali Lima](http://twitter.com/nathiuria)

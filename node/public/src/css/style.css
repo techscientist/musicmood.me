@@ -162,6 +162,7 @@ h4 {
 .musiclist li img {
     margin: 20px;
     width: 60px;
+    height: 60px;
     float: left;
 }
 .musiclist li span {
@@ -559,11 +560,11 @@ canvas {
 
 .overlay-close:hover::before , .overlay-close:hover::after{
     background: #636363;
-    -webkit-transform: scale(1.1);
-    -moz-transform: scale(1.1);
+    -webkit-transform:scale(0.5);
+    -moz-transform:scale(0.5);
     -ms-transform: scale(1.1);
-    -o-transform: scale(1.1);
-    transform: scale(1.1);
+    -o-transform:scale(0.5);
+    transform:scale(0.5);
 }
 
 .about,

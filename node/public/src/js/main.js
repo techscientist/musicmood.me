@@ -89,7 +89,7 @@ setTimeout(function() {
         ticker = new Ticker( $this ).reset();
     $this.data( 'ticker', ticker  );
     });
-}, 4300);
+}, 4500);
 
 window.setTimeout(function() {
     $('.moods').addClass('hide');
@@ -102,7 +102,7 @@ window.setTimeout(function() {
     setTimeout(function() {
         $('.songSearch').addClass('show').removeClass('hide').delay(5000);
     }, 2200);
-}, 5500);
+}, 7000);
 
 setTimeout(function() {
     color = rgbToHex(44, 251, 232);

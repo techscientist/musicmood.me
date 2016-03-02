@@ -44,6 +44,7 @@ h1 {
     margin-left: 10px;
     display: -webkit-inline-box;
     font-size: 20px;
+    opacity: 0;
 }
 .wrap {
     padding: 50px;
@@ -79,10 +80,6 @@ header a {
     text-transform: uppercase;
     color: #fff;
     text-decoration: none;
-}
-header a:hover {
-    color: #ccc;
-    text-decoration: underline;
 }
 .main {
     color: #fff;
@@ -277,18 +274,25 @@ input[type="text"]:focus {
     text-decoration: underline;
 }
 
+.github-button {
+    margin-top: 20px;
+}
 /* Footer */
 
 footer {
     padding: 50px 0px 50px 50px;
     width: 100%;
     padding: 50px;
-    color: #747474;
+    color: #464646;
     position: fixed;
     bottom: 0;
     text-transform: uppercase;
     left: 0;
     z-index: -9999;
+}
+footer a {
+    color: #747474;
+    text-decoration: none;
 }
 footer .api {
     float: right;
@@ -429,7 +433,7 @@ footer .spotifybrand img {
     padding-bottom: 50px;
 }
 .wrap-container ul li.active .item {
-    transform: scale(1.9);
+    transform: scale(2.9);
     color: #fff;
     /*font-size: 50px;*/
 }
@@ -437,6 +441,7 @@ footer .spotifybrand img {
     position: relative;
     transition: transform 200ms;
     display: inline-block;
+    font-size: 20px;
 }
 
 /* animated background */
@@ -597,23 +602,26 @@ canvas {
 .readme p {
     color: #636363;
     line-height: 1.6em;
+    margin-bottom: 10px;
 }
 
 /* A special hover */
-.readme p a { color: #464646; position: relative;
+.readme p a, .featured { color: #464646; position: relative;
 text-decoration: none; }
+.featured:hover { color: #949494; }
 
-.about a:before, .readme a:before {
+.featured:before {
     content: '';
     display: block;
     position: absolute;
     left: 0;
     bottom: 0;
     height: 1px;
+    margin-top: 2px;
     width: 100%;
     transition: width 100ms ease-out;
 }
-.about a:after, .readme a:after {
+.featured:after {
     content: '';
     display: block;
     position: absolute;
@@ -623,16 +631,19 @@ text-decoration: none; }
     width: 100%;
     background: #464646;
     transition: width .5s ease-out;
+    margin-top: 2px;
 }
-.about a:hover:before, .readme a:hover:before {
+.featured:hover:before {
     width: 0%;
-    background: #464646;
+    background: #949494;
     transition: width .5s ease-out;
+    margin-top: 2px;
 }
-.about a:hover:after, .readme a:hover:after {
+.featured:hover:after {
     width: 0%;
     background: transparent;
     transition: width 0s ease-out;
+    margin-top: 2px;
 }
 
 @media screen and (max-width: 640px) {

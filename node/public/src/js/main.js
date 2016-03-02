@@ -67,6 +67,7 @@ Ticker.prototype.loop = function() {
     }
 };
 
+$title = $( '.title' );
 $fmood = $( '.firstmood' );
 $smood = $( '.secondmood' );
 $tmood = $( '.thirthmood' );
@@ -90,19 +91,15 @@ setTimeout(function() {
     $this.data( 'ticker', ticker  );
     });
 }, 4500);
+setTimeout(function() {
+    $title.each( function() {
+    var $this = $( this ),
+        ticker = new Ticker( $this ).reset();
+    $this.data( 'ticker', ticker  );
+    $('h1').addClass('show');
+    });
+}, 6500);
 
-window.setTimeout(function() {
-    $('.moods').addClass('hide');
-    color = rgbToHex(255, 255, 255);
-    object.update();
-    $('.songSearch').addClass('hide');
-    setTimeout(function() {
-        $('.music').addClass('show');
-    }, 1000);
-    setTimeout(function() {
-        $('.songSearch').addClass('show').removeClass('hide').delay(5000);
-    }, 2200);
-}, 7000);
 
 setTimeout(function() {
     color = rgbToHex(44, 251, 232);
@@ -325,7 +322,7 @@ $('.songSearch').keyup(function() {
 $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
     var artist = $(this).find('span').eq(1).text();
-    if (artist !== 'Music Not Found') {
+    if (    artist !== 'Music Not Found') {
         $('.musiclist').removeClass('show').addClass('hide');
         $('.songSearch').val('Processing...');
         $.ajax({

@@ -83,7 +83,7 @@ header a {
 }
 header a:hover {
     color: #ccc;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
 }
 .main {
     color: #fff;
@@ -636,6 +636,64 @@ canvas {
     background: transparent;
     transition: width 0s ease-out;
 }
+
+.readme {
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -190px;
+    position: absolute;
+    top: 50%;
+    width: 380px;
+}
+.readme p {
+    color: #636363;
+    line-height: 1.6em;
+    margin-bottom: 10px;
+}
+.readme p a, .featured {
+    color: #464646;
+    position: relative;
+    text-decoration: none;
+}
+.featured:hover {
+    color: #949494;
+}
+.featured::before {
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 1px;
+    left: 0;
+    margin-top: 2px;
+    position: absolute;
+    transition: width 100ms ease-out 0s;
+    width: 100%;
+}
+.featured::after {
+    background: #464646 none repeat scroll 0 0;
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 1px;
+    margin-top: 2px;
+    position: absolute;
+    right: 0;
+    transition: width 0.5s ease-out 0s;
+    width: 100%;
+}
+.featured:hover::before {
+    background: #949494 none repeat scroll 0 0;
+    margin-top: 2px;
+    transition: width 0.5s ease-out 0s;
+    width: 0;
+}
+.featured:hover::after {
+    background: transparent none repeat scroll 0 0;
+    margin-top: 2px;
+    transition: width 0s ease-out 0s;
+    width: 0;
+}
+
 @media screen and (max-width: 640px) {
     .wrap {
         padding: 30px;

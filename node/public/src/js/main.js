@@ -325,7 +325,7 @@ $('.songSearch').keyup(function() {
 $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
     var artist = $(this).find('span').eq(1).text();
-    if (song !== 'Sorry' && artist !== 'Music Not Found') {
+    if (artist !== 'Music Not Found') {
         $('.musiclist').removeClass('show').addClass('hide');
         $('.songSearch').val('Processing...');
         $.ajax({
@@ -423,3 +423,7 @@ $("#trigger-overlay").click(function(){
 $(".overlay-close").click(function(){
     $(".overlay-scale").toggleClass("open");
 });
+
+if ($(window).width() < 640) {
+    $(".songSearch").attr("placeholder", "Type a song").placeholder();
+}

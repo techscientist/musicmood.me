@@ -560,11 +560,18 @@ canvas {
 
 .overlay-close:hover::before , .overlay-close:hover::after{
     background: #636363;
+<<<<<<< 73b2cc13bb448d4147e1dd89a2483b350820bc4c
+    -webkit-transform:scale(0.5);
+    -moz-transform:scale(0.5);
+    -o-transform:scale(0.5);
+    transform:scale(0.5);
+=======
     -webkit-transform: scale(1.1);
     -moz-transform: scale(1.1);
     -ms-transform: scale(1.1);
     -o-transform: scale(1.1);
     transform: scale(1.1);
+>>>>>>> Responsive adjusts & Bug fix
 }
 
 .about,

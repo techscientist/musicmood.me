@@ -58,8 +58,13 @@
     <div class="wrap">
         <header>
             <a href="#" class="logo">D3.do</a>
+<<<<<<< 234d5ea80829242e2c0c570e8c61bf64e8881c98
+            <h1 class="title hide">MusicMood</h1>
+            <a id="trigger-overlay" class="featured" href="#">about</a>
+=======
             <h1 class="firstmood">MusicMood</h1>
             <a id="trigger-overlay" href="#">about</a>
+>>>>>>> merge
         </header>
         <div class="overlay overlay-scale">
             <a href="#" class="overlay-close">Close</a>

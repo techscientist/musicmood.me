@@ -322,7 +322,11 @@ $('.songSearch').keyup(function() {
 $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
     var artist = $(this).find('span').eq(1).text();
+<<<<<<< 234d5ea80829242e2c0c570e8c61bf64e8881c98
+    if (    artist !== 'Music Not Found') {
+=======
     if (artist !== 'Music Not Found') {
+>>>>>>> merge
         $('.musiclist').removeClass('show').addClass('hide');
         $('.songSearch').val('Processing...');
         $.ajax({

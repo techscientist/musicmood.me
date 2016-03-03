@@ -299,8 +299,19 @@ function moodScroll(index) {
     }
 }
 
+var typingTimer;
+
+$('.songSearch').on('keydown', function () {
+  clearTimeout(typingTimer);
+});
+
 $('.songSearch').keyup(function() {
-    var _this = $(this);
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(doneTyping, 1000);
+});
+
+function doneTyping () {
+    var _this = $('.songSearch');
     var size = _this.val().length;
     $('.musiclist').html('');
     if (size >= 3 && _this.val() !== 'Processing...') {
@@ -336,7 +347,7 @@ $('.songSearch').keyup(function() {
             }
         })
     }
-});
+}
 
 $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();

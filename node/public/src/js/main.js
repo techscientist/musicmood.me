@@ -67,6 +67,7 @@ Ticker.prototype.loop = function() {
     }
 };
 
+$title = $( '.title' );
 $fmood = $( '.firstmood' );
 $smood = $( '.secondmood' );
 $tmood = $( '.thirthmood' );
@@ -90,6 +91,14 @@ setTimeout(function() {
     $this.data( 'ticker', ticker  );
     });
 }, 4500);
+setTimeout(function() {
+    $title.each( function() {
+    var $this = $( this ),
+        ticker = new Ticker( $this ).reset();
+    $this.data( 'ticker', ticker  );
+    $('h1').addClass('show');
+    });
+}, 7500);
 
 window.setTimeout(function() {
     $('.moods').addClass('hide');
@@ -98,10 +107,10 @@ window.setTimeout(function() {
     $('.songSearch').addClass('hide');
     setTimeout(function() {
         $('.music').addClass('show');
-    }, 1000);
+    }, 2000);
     setTimeout(function() {
         $('.songSearch').addClass('show').removeClass('hide').delay(5000);
-    }, 2200);
+    }, 3200);
 }, 7000);
 
 setTimeout(function() {
@@ -271,6 +280,13 @@ function moodScroll(index) {
         scrollTop: $("#selectedmood").position().top - 60,
     }, index * 200);
 
+    setTimeout(function() {
+        $('.moodfinal .share').removeClass('hide').addClass('show');
+    }, index);
+    setTimeout(function() {
+        $('.moodfinal .start').removeClass('hide').addClass('show');
+    }, index + 300);
+
     if (index == 1) {
         $('#wrap-scroll').animate({
             scrollTop: 37,
@@ -283,19 +299,8 @@ function moodScroll(index) {
     }
 }
 
-var typingTimer;
-
-$('.songSearch').on('keydown', function () {
-  clearTimeout(typingTimer);
-});
-
 $('.songSearch').keyup(function() {
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(doneTyping, 1000);
-});
-
-function doneTyping () {
-    var _this = $('.songSearch');
+    var _this = $(this);
     var size = _this.val().length;
     $('.musiclist').html('');
     if (size >= 3 && _this.val() !== 'Processing...') {
@@ -331,7 +336,7 @@ function doneTyping () {
             }
         })
     }
-}
+});
 
 $('.musiclist').on('click', 'li', function() {
     var song = $(this).find('span').eq(0).text();
@@ -357,7 +362,10 @@ $('.musiclist').on('click', 'li', function() {
                 object.update();
                 rotateTimeout = setTimeout(rotate, 60);
                 $('.music').removeClass('show').addClass('hide');
-                $('.moodfinal').addClass('show');
+
+                setTimeout(function() {
+                    $('.moodfinal').addClass('show');
+                }, 1000);
                 moodboard(preview_url);
                 moodScroll(data.mood.colorIndex - 2);
             },
@@ -379,7 +387,9 @@ $('.start').click(function(e) {
     moodScroll(0);
     $('.musiclist').removeClass('show').addClass('hide');
     $('.moodfinal').removeClass('show').addClass('hide');
-    $('.music').removeClass('hide').addClass('show')
+    $('.music').removeClass('hide').addClass('show');
+    $('.moodfinal .start').addClass('hide');
+    $('.moodfinal .share').addClass('hide');
 });
 
 function volume() {

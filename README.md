@@ -21,11 +21,13 @@ First, you need to create a `config.json` file in the root of the `node` folder 
 {
     "ECHONEST_API_KEY": "",
     "LASTFM_API_KEY": "",
-    "LASTFM_API_SEC": ""
+    "LASTFM_API_SEC": "",
+    "SPOTIFY_CLIENT_ID": "",
+    "SPOTIFY_CLIENT_SEC":""
 }
 ```
 
-You can get the keys [here](http://www.last.fm/api/account/create) and [here](http://developer.echonest.com/account/register).
+You can get the keys [here](http://www.last.fm/api/account/create) [here](http://developer.echonest.com/account/register) and [here](https://developer.spotify.com).
 
 For development, we recomend [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 

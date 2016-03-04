@@ -125,45 +125,47 @@ var moodboard = function(url) {
         };
         return Particle;
     }();
-    Sketch.create({
-        particles: [],
-        setup: function() {
-            var analyser, error, i, intro, j, particle, ref, warning, x, y;
-            for (i = j = 0, ref = NUM_PARTICLES - 1; j <= ref; i = j += 1) {
-                x = random(this.width);
-                y = random(this.height * 2);
-                particle = new Particle(x, y);
-                particle.energy = random(particle.band / 256);
-                this.particles.push(particle);
-            }
-            if (AudioAnalyser.enabled) {
-                try {
-                    analyser = new AudioAnalyser(MP3_PATH, NUM_BANDS, SMOOTHING);
-                    analyser.onUpdate = function(_this) {
-                        return function(bands) {
-                            var k, len, ref1, results;
-                            ref1 = _this.particles;
-                            results = [];
-                            for (k = 0, len = ref1.length; k < len; k++) {
-                                particle = ref1[k];
-                                results.push(particle.energy = bands[particle.band] / 256);
-                            }
-                            m2 = results[0] * 20;
-                            object.update();
-                            return results;
-                        };
-                    }(this);
-                    analyser.start();
-                    document.body.appendChild(analyser.audio);
-                    if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
-                        return warning.style.display = 'block';
-                    }
-                } catch (_error) {
-                    error = _error;
+    if ($(window).width() > 640) {
+        Sketch.create({
+            particles: [],
+            setup: function() {
+                var analyser, error, i, intro, j, particle, ref, warning, x, y;
+                for (i = j = 0, ref = NUM_PARTICLES - 1; j <= ref; i = j += 1) {
+                    x = random(this.width);
+                    y = random(this.height * 2);
+                    particle = new Particle(x, y);
+                    particle.energy = random(particle.band / 256);
+                    this.particles.push(particle);
                 }
-            } else {
-                return warning.style.display = 'block';
+                if (AudioAnalyser.enabled) {
+                    try {
+                        analyser = new AudioAnalyser(MP3_PATH, NUM_BANDS, SMOOTHING);
+                        analyser.onUpdate = function(_this) {
+                            return function(bands) {
+                                var k, len, ref1, results;
+                                ref1 = _this.particles;
+                                results = [];
+                                for (k = 0, len = ref1.length; k < len; k++) {
+                                    particle = ref1[k];
+                                    results.push(particle.energy = bands[particle.band] / 256);
+                                }
+                                m2 = results[0] * 20;
+                                object.update();
+                                return results;
+                            };
+                        }(this);
+                        analyser.start();
+                        document.body.appendChild(analyser.audio);
+                        if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+                            return warning.style.display = 'block';
+                        }
+                    } catch (_error) {
+                        error = _error;
+                    }
+                } else {
+                    return warning.style.display = 'block';
+                }
             }
-        }
-    });
+        });
+    }
 }

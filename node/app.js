@@ -1,3 +1,6 @@
+// get songs by mood
+// `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=50&mood=happy`
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var swig = require('swig');

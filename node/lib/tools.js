@@ -103,6 +103,7 @@ function createTrack(info) {
 module.exports = {
     LASTFM_API_KEY: config.LASTFM_API_KEY,
     LASTFM_API_SEC: config.LASTFM_API_SEC,
+    ECHONEST_API_KEY: config.ECHONEST_API_KEY,
     BEATS_PER_SECOND: beats_per_second,
     SOCKET_SERVER: socket_server,
     SOCKET_PORT: socket_port,

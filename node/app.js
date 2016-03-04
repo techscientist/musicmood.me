@@ -1,11 +1,10 @@
-// get songs by mood
-// `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=50&mood=happy`
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 var consolidate = require('consolidate');
 var ua = require('universal-analytics');
+var SpotifyWebApi = require('spotify-web-api-node');
+var rs = require('request-promise');
 var tools = require('./lib/tools');
 var LastfmAPI = require('lastfmapi');
 var LastFmNode = require('lastfm').LastFmNode;
@@ -35,6 +34,11 @@ var lfm = new LastfmAPI({
 var lastfm = new LastFmNode({
     api_key: tools.LASTFM_API_KEY,
     secret: tools.LASTFM_API_SEC
+});
+
+var spotifyApi = new SpotifyWebApi({
+    clientId: tools.SPOTIFY_CLIENT_ID,
+    clientSecret: tools.SPOTIFY_CLIENT_ID
 });
 
 var visitor = ua('UA-74495247-1');
@@ -96,6 +100,146 @@ app.get('/mood/:artist/:song/', (req, res) => {
             })
         })
     visitor.event("Backend", "api_mood", "Song", artist + ' ' + song).send()
+});
+
+app.get('/get_playlist/:mood', (req, res) => {
+    var mood = req.params.mood;
+    var songs = [];
+    var ids = [];
+
+
+
+    function process_songs() {
+        if (songs.length > 0 && songs[0].indexOf('spotify:track') < 0) {
+            rs({
+                    uri: `https://api.spotify.com/v1/search?query=${encodeURIComponent(songs[0])}&offset=0&limit=1&type=track`,
+                    json: true
+                })
+                .then((data) => {
+                    if (data.tracks.items.length > 0) {
+                        ids.push(data.tracks.items[0].uri);
+                    }
+                    songs.shift();
+                    if (ids.length < 20) {
+                        process_songs();
+                    } else {
+                        songs = [];
+                        process_songs();
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({
+                        "error": true,
+                        "msg": "Error processing mood"
+                    });
+                });
+        } else {
+            if (songs.length > 0) {
+                ids = songs;
+            }
+            mongo.getInstance((db) => {
+                db.collection('moods').updateOne({
+                    "mood": mood
+                }, {
+                    $set: {
+                        "songs": ids,
+                    }
+                }, (err, results) => {
+                    if (!err) {
+                        spotifyApi.createPlaylist('227zpb4bj4r6hlmdopa7xaq4a', `${mood} playlist by MusicMood`, {
+                                'public': true
+                            })
+                            .then(function(data) {
+                                res.json(data);
+                            }, function(err) {
+                                console.log(err);
+                                res.json({
+                                    "error": true,
+                                    "msg": "Error processing mood"
+                                });
+                            });
+                    } else {
+                        res.json({
+                            "error": true,
+                            "msg": "Error processing mood"
+                        });
+                    }
+                })
+            });
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+            mongo.getInstance((db) => {
+                db.collection('moods')
+                    .findOne({
+                        mood: mood
+                    }, (err, item) => {
+                        if (!err) {
+                            if (item) {
+                                resolve(item);
+                            } else {
+                                var url = `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=100&mood=${mood}`;
+                                rs({
+                                        uri: url,
+                                        json: true
+                                    })
+                                    .then((data) => {
+                                        var items = data.response.songs;
+                                        db.collection('moods').insertOne({
+                                            mood: mood,
+                                            songs: items
+                                        }, (err, item) => {
+                                            if (!err) {
+                                                db.collection('moods')
+                                                    .findOne({
+                                                        mood: mood
+                                                    }, (err, item) => {
+                                                        if (!err) {
+                                                            if (item) {
+                                                                resolve(item);
+                                                            } else {
+                                                                reject("MOOD_NOT_FOUND");
+                                                            }
+                                                        } else {
+                                                            reject(err);
+                                                        }
+                                                    })
+                                            } else {
+                                                reject(err);
+                                            }
+                                        });
+                                    })
+                            }
+                        } else {
+                            reject(err);
+                        }
+                    });
+            })
+        })
+        .then((mood) => {
+            if (mood.url) {
+                res.json({
+                    "error": false,
+                    "playlist_url": mood.url
+                });
+            } else {
+                var url;
+
+                mood.songs.forEach((item) => {
+                    songs.push(`${item.artist_name} ${item.title}`);
+                });
+                process_songs();
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({
+                "error": true,
+                "msg": "Error processing mood"
+            });
+        })
 });
 
 app.get('/login', (req, res) => {

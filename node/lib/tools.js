@@ -278,67 +278,67 @@ module.exports = {
 
                         options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(song+' '+artist)}&offset=0&limit=50&type=track`;
                         rs(options)
-                        .then((data) =>{
-                            var preview_url = undefined;
-                            if (!!data && !!data.tracks && !!data.tracks.items) {
-                                data.tracks.items.forEach((item) => {
-                                    item.artists.forEach((artist_name) => {
-                                        var current_name = artist_name.name.toLowerCase().trim();
-                                        var playing_name = artist.toLowerCase().trim();
-                                        if (current_name.substring(0, 3) === "the") {
-                                            current_name = current_name.substring(3).trim();
-                                        }
-                                        if (playing_name.substring(0, 3) === "the") {
-                                            playing_name = playing_name.substring(3).trim();
-                                        }
-                                        if (current_name === playing_name) {
-                                            preview_url = item.preview_url;
-                                        }
+                            .then((data) => {
+                                var preview_url = undefined;
+                                if (!!data && !!data.tracks && !!data.tracks.items) {
+                                    data.tracks.items.forEach((item) => {
+                                        item.artists.forEach((artist_name) => {
+                                            var current_name = artist_name.name.toLowerCase().trim();
+                                            var playing_name = artist.toLowerCase().trim();
+                                            if (current_name.substring(0, 3) === "the") {
+                                                current_name = current_name.substring(3).trim();
+                                            }
+                                            if (playing_name.substring(0, 3) === "the") {
+                                                playing_name = playing_name.substring(3).trim();
+                                            }
+                                            if (current_name === playing_name) {
+                                                preview_url = item.preview_url;
+                                            }
+                                        });
                                     });
-                                });
 
-                                if (preview_url) {
-                                    resolve({
-                                        "preview_url": preview_url,
-                                        "energy": energy,
-                                        "valence": valence
-                                    });
-                                } else {
-                                    options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(song+' '+artist)}&entity=musicTrack`;
-                                    rs(options)
-                                        .then((data) => {
-                                            if (!!data && !!data.results) {
-                                                data.results.forEach((item) => {
-                                                    var current_name = item.artistName.toLowerCase().trim();
-                                                    var playing_name = artist.toLowerCase().trim();
-                                                    if (current_name.substring(0, 3) === "the") {
-                                                        current_name = current_name.substring(3).trim();
-                                                    }
-                                                    if (playing_name.substring(0, 3) === "the") {
-                                                        playing_name = playing_name.substring(3).trim();
-                                                    }
-                                                    if (current_name === playing_name) {
-                                                        preview_url = item.previewUrl;
-                                                    }
-                                                });
-                                                if (preview_url) {
-                                                    resolve({
-                                                        "preview_url": preview_url,
-                                                        "energy": energy,
-                                                        "valence": valence
+                                    if (preview_url) {
+                                        resolve({
+                                            "preview_url": preview_url,
+                                            "energy": energy,
+                                            "valence": valence
+                                        });
+                                    } else {
+                                        options.uri = `https://itunes.apple.com/search?term=${encodeURIComponent(song+' '+artist)}&entity=musicTrack`;
+                                        rs(options)
+                                            .then((data) => {
+                                                if (!!data && !!data.results) {
+                                                    data.results.forEach((item) => {
+                                                        var current_name = item.artistName.toLowerCase().trim();
+                                                        var playing_name = artist.toLowerCase().trim();
+                                                        if (current_name.substring(0, 3) === "the") {
+                                                            current_name = current_name.substring(3).trim();
+                                                        }
+                                                        if (playing_name.substring(0, 3) === "the") {
+                                                            playing_name = playing_name.substring(3).trim();
+                                                        }
+                                                        if (current_name === playing_name) {
+                                                            preview_url = item.previewUrl;
+                                                        }
                                                     });
+                                                    if (preview_url) {
+                                                        resolve({
+                                                            "preview_url": preview_url,
+                                                            "energy": energy,
+                                                            "valence": valence
+                                                        });
+                                                    } else {
+                                                        reject('NO_PREVIEW_FROM_APPLE');
+                                                    }
                                                 } else {
                                                     reject('NO_PREVIEW_FROM_APPLE');
                                                 }
-                                            } else {
-                                                reject('NO_PREVIEW_FROM_APPLE');
-                                            }
-                                        })
+                                            })
+                                    }
+                                } else {
+                                    reject('NO_PREVIEW_FROM_SPOTIFY');
                                 }
-                            } else {
-                                reject('NO_PREVIEW_FROM_SPOTIFY');
-                            }
-                        })
+                            })
                     })
             })
         } else {

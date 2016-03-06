@@ -34,3 +34,4 @@ tmp/*
 .vagrant/*
 config.json
 .codekit-cache
+build

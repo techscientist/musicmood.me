@@ -53,23 +53,21 @@ app.get('/callback', (req, res) => {
     // Retrieve an access token and a refresh token
     spotifyApi.authorizationCodeGrant(req.param('code'))
         .then(function(data) {
-            console.log('token', data.body['access_token']);
             spotifyApi.setAccessToken(data.body['access_token']);
             spotifyApi.setRefreshToken(data.body['refresh_token']);
             res.json(data.body);
         }, function(err) {
-            console.log('Something went wrong!', err);
+            console.log(err);
         });
 });
 
 app.get('/refresh', (req, res) => {
     spotifyApi.refreshAccessToken()
         .then(function(data) {
-            console.log('The access token has been refreshed!');
             spotifyApi.setAccessToken(data.body['access_token']);
             res.json(data);
         }, function(err) {
-            console.log('Could not refresh access token', err);
+            console.log(err);
             res.redirect('/token');
         });
 });

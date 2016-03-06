@@ -212,7 +212,7 @@ app.get('/get_playlist/:mood', (req, res) => {
                     }
                 }, (err, results) => {
                     if (!err) {
-                        spotifyApi.createPlaylist('227zpb4bj4r6hlmdopa7xaq4a', `${mood.toUpperCase()} playlist by MusicMood`, {
+                        spotifyApi.createPlaylist('227zpb4bj4r6hlmdopa7xaq4a', `${mood.toUpperCase()} by MusicMood`, {
                                 'public': true
                             })
                             .then(function(data) {

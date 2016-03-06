@@ -63,6 +63,23 @@ if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
 }
 ```
 
+## Building
+
+The static files are processed with `Grunt`, so run:
+
+```
+~$ npm install grunt -g
+```
+
+And, after grunt is installed, go do folder `node/public` and run:
+
+```
+~$ npm install
+~$ grunt
+```
+
+To generate the build folder. More info [here](http://gruntjs.com/getting-started)
+
 ## Running
 
 You have three interfaces to run (as you wish):

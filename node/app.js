@@ -188,15 +188,15 @@ app.get('/get_playlist/:mood', (req, res) => {
                                             "url": data.body.external_urls.spotify,
                                         }
                                     }, (err, results) => {
-                                            if (!err) {
-                                                res.json({
-                                                    "error": false,
-                                                    "playlist_url": data.body.external_urls.spotify
-                                                });
-                                            } else {
-                                                reject(err);
-                                            }
-                                        })
+                                        if (!err) {
+                                            res.json({
+                                                "error": false,
+                                                "playlist_url": data.body.external_urls.spotify
+                                            });
+                                        } else {
+                                            reject(err);
+                                        }
+                                    })
                                 });
                             }, function(err) {
                                 console.log(err);

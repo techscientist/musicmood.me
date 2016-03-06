@@ -185,7 +185,7 @@ app.get('/get_playlist/:mood', (req, res) => {
                         ids.push(data.tracks.items[0].uri);
                     }
                     songs.shift();
-                    if (ids.length < 20) {
+                    if (ids.length < 25) {
                         process_songs();
                     } else {
                         songs = [];
@@ -268,7 +268,7 @@ app.get('/get_playlist/:mood', (req, res) => {
                             if (item) {
                                 resolve(item);
                             } else {
-                                var url = `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=100&mood=${mood}`;
+                                var url = `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=100&mood=${mood}&sort=mode-desc`;
                                 rs({
                                         uri: url,
                                         json: true

@@ -394,6 +394,7 @@ if (isIe()) {
 
                     setTimeout(function() {
                         $('.moodfinal').addClass('show');
+                        $('.listen').attr('href',data.playlist_url);
                     }, 1000);
                     moodboard(preview_url);
                     moodScroll(data.mood.colorIndex - 2);

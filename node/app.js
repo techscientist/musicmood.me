@@ -74,10 +74,27 @@ app.get('/refresh', (req, res) => {
 
 // home route
 app.get('/', (req, res) => {
+    var moods = [];
     res.render('index.html', {
-        "moods": Moods.moods.filter(function(value, index) {
+        "moods": Moods.moods.filter((value, index) => {
             return index > 1
         })
+    });
+});
+
+//list all the moods
+app.get('/moods', (req, res) => {
+    var moods = [];
+    Moods.moods.filter(function(value, index) {
+        return index > 1
+    }).forEach((item) => {
+        moods.push({
+            "mood": item.mood,
+            "color": item.color
+        })
+    })
+    res.json({
+        "moods": moods
     });
 });
 
@@ -87,12 +104,33 @@ app.post('/get_song', (req, res) => {
     var artist = req.body.artist;
     tools.searchSong(song, artist)
         .then((info) => {
-            res.json({
-                "mood": Moods.NearestFeeling({
-                    "energy": info.energy,
-                    "valence": info.valence
-                }),
-                "preview_url": info.preview_url
+            var mood = Moods.NearestFeeling({
+                "energy": info.energy,
+                "valence": info.valence
+            });
+            mongo.getInstance((db) => {
+                db.collection('moods')
+                    .findOne({
+                        mood: mood.mood
+                    }, (err, item) => {
+                        if (!err) {
+                            if (item) {
+                                res.json({
+                                    "mood": mood,
+                                    "preview_url": info.preview_url,
+                                    "playlist_url": item.url
+                                });
+                            } else {
+                                res.json({
+                                    "mood": mood,
+                                    "preview_url": info.preview_url,
+                                    "playlist_url": ""
+                                });
+                            }
+                        } else {
+                            return Promise.reject(err);
+                        }
+                    });
             });
         })
         .catch((error) => {
@@ -187,10 +225,16 @@ app.get('/get_playlist/:mood', (req, res) => {
                                         }
                                     }, (err, results) => {
                                         if (!err) {
-                                            res.json({
-                                                "error": false,
-                                                "playlist_url": data.body.external_urls.spotify
-                                            });
+                                            spotifyApi.addTracksToPlaylist('227zpb4bj4r6hlmdopa7xaq4a', data.body.id, ids)
+                                                .then(function(data) {
+                                                    res.json({
+                                                        "error": false,
+                                                        "playlist_url": data.body.external_urls.spotify
+                                                    });
+                                                }, function(err) {
+                                                    console.log(err);
+                                                });
+
                                         } else {
                                             reject(err);
                                         }

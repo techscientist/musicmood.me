@@ -38,10 +38,41 @@ var lastfm = new LastFmNode({
 
 var spotifyApi = new SpotifyWebApi({
     clientId: tools.SPOTIFY_CLIENT_ID,
-    clientSecret: tools.SPOTIFY_CLIENT_ID
+    clientSecret: tools.SPOTIFY_CLIENT_SECRET,
+    redirectUri: tools.SPOTIFY_REDIRECT_URI
 });
 
 var visitor = ua('UA-74495247-1');
+
+app.get('/token', (req, res) => {
+    var authorizeURL = spotifyApi.createAuthorizeURL(['playlist-modify-public'], 'state');
+    res.redirect(authorizeURL);
+});
+
+app.get('/callback', (req, res) => {
+    // Retrieve an access token and a refresh token
+    spotifyApi.authorizationCodeGrant(req.param('code'))
+        .then(function(data) {
+            console.log('token', data.body['access_token']);
+            spotifyApi.setAccessToken(data.body['access_token']);
+            spotifyApi.setRefreshToken(data.body['refresh_token']);
+            res.json(data.body);
+        }, function(err) {
+            console.log('Something went wrong!', err);
+        });
+});
+
+app.get('/refresh', (req, res) => {
+    spotifyApi.refreshAccessToken()
+        .then(function(data) {
+            console.log('The access token has been refreshed!');
+            spotifyApi.setAccessToken(data.body['access_token']);
+            res.json(data);
+        }, function(err) {
+            console.log('Could not refresh access token', err);
+            res.redirect('/token');
+        });
+});
 
 // home route
 app.get('/', (req, res) => {
@@ -107,8 +138,6 @@ app.get('/get_playlist/:mood', (req, res) => {
     var songs = [];
     var ids = [];
 
-
-
     function process_songs() {
         if (songs.length > 0 && songs[0].indexOf('spotify:track') < 0) {
             rs({
@@ -147,11 +176,28 @@ app.get('/get_playlist/:mood', (req, res) => {
                     }
                 }, (err, results) => {
                     if (!err) {
-                        spotifyApi.createPlaylist('227zpb4bj4r6hlmdopa7xaq4a', `${mood} playlist by MusicMood`, {
+                        spotifyApi.createPlaylist('227zpb4bj4r6hlmdopa7xaq4a', `${mood.toUpperCase()} playlist by MusicMood`, {
                                 'public': true
                             })
                             .then(function(data) {
-                                res.json(data);
+                                mongo.getInstance((db) => {
+                                    db.collection('moods').updateOne({
+                                        "mood": mood
+                                    }, {
+                                        $set: {
+                                            "url": data.body.external_urls.spotify,
+                                        }
+                                    }, (err, results) => {
+                                            if (!err) {
+                                                res.json({
+                                                    "error": false,
+                                                    "playlist_url": data.body.external_urls.spotify
+                                                });
+                                            } else {
+                                                reject(err);
+                                            }
+                                        })
+                                });
                             }, function(err) {
                                 console.log(err);
                                 res.json({
@@ -226,7 +272,6 @@ app.get('/get_playlist/:mood', (req, res) => {
                 });
             } else {
                 var url;
-
                 mood.songs.forEach((item) => {
                     songs.push(`${item.artist_name} ${item.title}`);
                 });

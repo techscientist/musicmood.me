@@ -72,7 +72,7 @@ The static files are processed with `Grunt`, so run:
 ~$ npm install grunt -g
 ```
 
-And, after grunt is installed, go do folder `node/public` and run:
+And, after grunt is installed, go to `node/public` and run:
 
 ```
 ~$ npm install

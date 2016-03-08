@@ -316,7 +316,7 @@ input[type="text"]:focus {
 /* Footer */
 
 footer {
-    padding: 50px 0px 50px 50px;
+    padding: 0px 50px 50px 50px;
     width: 100%;
     padding: 50px;
     color: #464646;
@@ -437,17 +437,20 @@ footer .spotifybrand img {
 }
 .wrap-container {
     position: relative;
-    max-height: 220px;
+    max-height: 270px;
     width: 100%;
     max-width: 100%;
     margin: auto;
     /* background: #eee; */
     padding-right: 20px;
-    mask: url(#masking);
-    -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.5, black), color-stop(1, transparent));
+/*    mask: url(../img/mask.svg);*/
+    -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.00, rgba(0,0,0,0)), color-stop(0.25, rgba(0,0,0,1)), color-stop(0.50, rgba(0,0,0,1)), color-stop(0.75, rgba(0,0,0,1)), color-stop(1.00, rgba(0,0,0,0)));
     overflow: hidden;
-    top: -92px;
+    top: -62px;
     left: 10px;
+}
+.scroll-container {
+    height: 260px;
 }
 .wrap-container ul {
     list-style: none;
@@ -465,7 +468,8 @@ footer .spotifybrand img {
     line-height: 50px;
     transition: transform .3s;
     overflow: hidden;
-    color: #585858;
+    color: #919191;
+    /*font-size: 20px;*/
 }
 .wrap-container ul li:last-of-type {
     padding-bottom: 50px;
@@ -480,6 +484,7 @@ footer .spotifybrand img {
     transition: transform 200ms;
     display: inline-block;
     font-size: 20px;
+    /*font-size: 25px;*/
 }
 
 /* animated background */

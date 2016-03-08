@@ -417,7 +417,9 @@ if (isIe()) {
         moodScroll(0);
         $('.musiclist').removeClass('show').addClass('hide');
         $('.moodfinal').removeClass('show').addClass('hide');
-        $('.music').removeClass('hide').addClass('show');
+        setTimeout(function() {
+            $('.music').removeClass('hide').addClass('show');
+        }, 700);
         $('.moodfinal .start').addClass('hide');
         $('.moodfinal .share').addClass('hide');
     });

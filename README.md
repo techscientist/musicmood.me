@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/d3estudio/musicmood.me.svg?branch=master)](https://travis-ci.org/d3estudio/musicmood.me)
+[![Build Status](https://travis-ci.org/d3estudio/musicmood.me.svg?branch=dev)](https://travis-ci.org/d3estudio/musicmood.me)
 
 # ![MusicMood](node/public/src/img/musicmood.png)
 # Music Mood

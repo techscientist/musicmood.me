@@ -41,6 +41,8 @@ function getInstance(cb) {
     } else {
         if (cb && typeof(cb) == 'function') {
             cb(p_db);
+        } else {
+            throw new Error("Not a function for callback");
         }
     }
 }

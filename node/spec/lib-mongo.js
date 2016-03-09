@@ -76,4 +76,32 @@ describe('Mongo', function() {
         });
     });
 
+    describe('getInstance when MongoClient has ben initiated', function() {
+        var mongoStub;
+        before(function() {
+            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+                callback(false, true);
+            });
+            Mongo = Mongo.initPool();
+        });
+
+        after(function() {
+            mongoStub.restore();
+        });
+
+        it('should not fail', function() {
+            expect(function() {
+                Mongo.getInstance(function(p_db) {
+                    return p_db;
+                });
+            }).to.not.Throw();
+        });
+
+        it('should fail without callback', function() {
+            expect(function() {
+                Mongo.getInstance();
+            }).to.Throw();
+        });
+    });
+
 });

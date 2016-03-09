@@ -81,31 +81,44 @@ var Moods = function() {
         new Mood("strange", 0.025, 0.345, [29, 72, 247])
     ];
     this.Deg2Rad = function(deg) {
-        return deg;
+        if (isNaN(deg)) {
+            return false;
+        }else{
+            return deg;
+        }
     }
     this.PythagorasEquirectangular = function(e1, v1, e2, v2) {
-        e1 = _this.Deg2Rad(e1);
-        e2 = _this.Deg2Rad(e2);
-        v1 = _this.Deg2Rad(v1);
-        v2 = _this.Deg2Rad(v2);
-        var x = (v2 - v1) * Math.cos((e1 + e2) / 2);
-        var y = (e2 - e1);
-        var d = Math.sqrt(x * x + y * y);
-        return d;
+        if (isNaN(e1) || isNaN(v1) || isNaN(e2) || isNaN(v2)) {
+            return false;
+        }else{
+            e1 = _this.Deg2Rad(e1);
+            e2 = _this.Deg2Rad(e2);
+            v1 = _this.Deg2Rad(v1);
+            v2 = _this.Deg2Rad(v2);
+            var x = (v2 - v1) * Math.cos((e1 + e2) / 2);
+            var y = (e2 - e1);
+            var d = Math.sqrt(x * x + y * y);
+            return d;
+        }
     }
     this.NearestFeeling = function(feeling) {
-        var mindif = 99999;
-        var closest;
-        for (index = 0; index < _this.moods.length; ++index) {
-            var dif = _this.PythagorasEquirectangular(feeling.energy, feeling.valence, _this.moods[index].energy, _this.moods[index].valence);
-            if (dif < mindif) {
-                closest = index;
-                mindif = dif;
+        if (typeof feeling === 'object') {
+            var mindif = 99999;
+            var closest;
+            for (index = 0; index < _this.moods.length; ++index) {
+                var dif = _this.PythagorasEquirectangular(feeling.energy, feeling.valence, _this.moods[index].energy, _this.moods[index].valence);
+                if (dif < mindif) {
+                    closest = index;
+                    mindif = dif;
+                }
             }
+            var feeling = _this.moods[closest];
+            feeling.colorIndex = closest;
+            return feeling;
+        }else{
+            return false;
         }
-        var feeling = _this.moods[closest];
-        feeling.colorIndex = closest;
-        return feeling;
+
     }
 }
 module.exports = Moods;

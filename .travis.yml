@@ -1,4 +1,5 @@
 language: node_js
 node_js:
   - "5.6.0"
-script: cd node && npm install && npm run coverage
+script: cd node && npm install && npm test
+after_success: npm run coverage

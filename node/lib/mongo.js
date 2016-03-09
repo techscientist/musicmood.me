@@ -39,8 +39,9 @@ function getInstance(cb) {
     if (!p_db) {
         initPool(cb)
     } else {
-        if (cb && typeof(cb) == 'function')
+        if (cb && typeof(cb) == 'function') {
             cb(p_db);
+        }
     }
 }
 

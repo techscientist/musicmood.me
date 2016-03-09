@@ -125,6 +125,9 @@ if (isIe()) {
         $('.songSearch').addClass('hide');
         setTimeout(function() {
             $('.music').addClass('show');
+            setTimeout(function() {
+                $('input').focus();
+            }, 2000);
         }, 2000);
         setTimeout(function() {
             $('.songSearch').addClass('show').removeClass('hide').delay(5000);
@@ -483,4 +486,5 @@ if (isIe()) {
         $(".songSearch").addClass("mobile");
         $('footer').remove();
     }
+
 }

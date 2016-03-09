@@ -1,5 +1,5 @@
 # ![MusicMood](node/public/src/img/musicmood.png)
-# Music Mood [![Build Status](https://travis-ci.org/d3estudio/musicmood.me.svg?branch=dev)](https://travis-ci.org/d3estudio/musicmood.me)
+# Music Mood [![Build Status](https://travis-ci.org/d3estudio/musicmood.me.svg?branch=dev)](https://travis-ci.org/d3estudio/musicmood.me) [![Coverage Status](https://coveralls.io/repos/github/d3estudio/musicmood.me/badge.svg?branch=master)](https://coveralls.io/github/d3estudio/musicmood.me?branch=master)
 
 > How to relate your daily songs to how you feel?
 

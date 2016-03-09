@@ -22,4 +22,58 @@ describe('Mongo', function() {
             expect(Mongo.initPool).to.Throw();
         });
     });
+
+    describe('initPool when MongoClient succed', function() {
+        var mongoStub;
+        before(function() {
+            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+                return true;
+            });
+        });
+
+        after(function() {
+            mongoStub.restore();
+        });
+
+        it('should not fail', function() {
+            expect(Mongo.initPool).to.not.Throw();
+        });
+    });
+
+    describe('initPool when MongoClient succed with callback', function() {
+        var mongoStub;
+        before(function() {
+            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+                callback();
+            });
+        });
+
+        after(function() {
+            mongoStub.restore();
+        });
+
+        it('should not fail', function() {
+            expect(Mongo.initPool(function() {
+                return true;
+            })).to.not.Throw();
+        });
+    });
+
+    describe('getInstance when MongoClient succeed', function() {
+        var mongoStub;
+        before(function() {
+            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+                callback();
+            });
+        });
+
+        after(function() {
+            mongoStub.restore();
+        });
+
+        it('should not fail', function() {
+            expect(Mongo.getInstance).to.not.Throw();
+        });
+    });
+
 });

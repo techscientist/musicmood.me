@@ -1,4 +1,4 @@
 language: node_js
 node_js:
   - "5.6.0"
-script: cd tilt-client && npm install && npm test
+script: cd node && npm install && npm test

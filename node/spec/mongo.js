@@ -20,9 +20,6 @@ describe('Mongo', function() {
 
         it('should fail', function() {
             expect(Mongo.initPool).to.Throw();
-            // expect(function() {
-            //     Mongo.initPool();
-            // }).to.Throw();
         });
     });
 });

@@ -91,13 +91,30 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            scripts: {
+                files: ['**/*.js'],
+                tasks: ['uglify'],
+                options: {
+                    livereload: true,
+                },
+            },
+            css: {
+                files: '**/*.css',
+                tasks: ['cssmin'],
+                options: {
+                    livereload: true,
+                },
+            },
+        },
+
     };
 
     //Init
     grunt.initConfig(appConfig);
 
     grunt.registerTask('test', ['jshint']);
-
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.registerTask('default', ['clean', 'copy', 'cssmin', 'uglify', 'imagemin', 'notify']);
     grunt.registerTask('build', ['clean', 'copy', 'cssmin', 'uglify', 'imagemin', 'notify']);
     grunt.registerTask('build-no-statics', ['cssmin', 'uglify']);

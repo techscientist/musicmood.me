@@ -13,7 +13,7 @@ var ECHONEST_API_KEY = config.ECHONEST_API_KEY,
     energy = 0,
     valence = 0,
     socket_port = 3030,
-    socket_server = undefined;
+    socket_server;
 
 if (os.hostname() === 'vagrant-ubuntu-trusty-64') {
     // localhost inside vagrant

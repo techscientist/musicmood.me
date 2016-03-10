@@ -6,7 +6,7 @@
   "repository": "https://github.com/chr0nu5/spotify-visualization",
   "scripts": {
     "test": "find spec -name \"*.js\" | xargs node_modules/.bin/mocha",
-    "coverage": "npm test && node_modules/.bin/nyc report",
+    "coverage": "node_modules/.bin/nyc npm test",
     "start": "node app.js"
   },
   "dependencies": {

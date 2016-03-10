@@ -2,7 +2,7 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var rs = require('request-promise');
-var mongo = require('./mongo').initPool();
+var mongo = require('./mongo');
 var os = require('os');
 var config = require('../config.json');
 

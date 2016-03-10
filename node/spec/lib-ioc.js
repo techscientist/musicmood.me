@@ -5,6 +5,7 @@ var sinon = require("sinon"),
 
 describe('Ioc', function() {
     var iocStub;
+
     before(function() {
         iocStub = sinon.stub(ioc, 'connect', function(url) {
             return true;

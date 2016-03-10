@@ -6,7 +6,6 @@ var moods = new Moods();
 
 module.exports = {
     index: (req, res) => {
-        var moods = [];
         res.render('index.html', {
             "moods": moods.moods.filter((value, index) => index > 1)
         });

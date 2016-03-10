@@ -27,7 +27,7 @@ module.exports = {
         }));
     },
     recordUAEvent: function() {
-        if(tools.analyticsKey) {
+        if(tools.analyticsKey && tools.analyticsKey.length) {
             uaInstance = uaInstance || ua(tools.analyticsKey);
             try {
                 var ev = uaInstance.event.apply(uaInstance, arguments);

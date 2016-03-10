@@ -6,7 +6,7 @@ var mongo = require('./mongo').initPool();
 var os = require('os');
 var config = require('../config.json');
 
-var ECHONEST_API_KEY = config.ECHONEST_API_KEY,
+var echonestApiKey = config.echonestApiKey,
     duration = 0,
     fileType = 'mp3',
     beats_per_second = 50,
@@ -101,15 +101,15 @@ function createTrack(info) {
 }
 
 module.exports = {
-    LASTFM_API_KEY: config.LASTFM_API_KEY,
-    LASTFM_API_SEC: config.LASTFM_API_SEC,
-    ECHONEST_API_KEY: config.ECHONEST_API_KEY,
-    SPOTIFY_CLIENT_ID: config.SPOTIFY_CLIENT_ID,
-    SPOTIFY_CLIENT_SECRET: config.SPOTIFY_CLIENT_SECRET,
-    SPOTIFY_REDIRECT_URI: config.SPOTIFY_REDIRECT_URI,
-    BEATS_PER_SECOND: beats_per_second,
-    SOCKET_SERVER: socket_server,
-    SOCKET_PORT: socket_port,
+    lastFmApiKey: config.lastFmApiKey,
+    lastFmApiSecret: config.lastFmApiSecret,
+    echonestApiKey: config.echonestApiKey,
+    spotifyClientId: config.spotifyClientId,
+    spotifyClientSecret: config.spotifyClientSecret,
+    spotifyRedirectUri: config.spotifyRedirectUri,
+    beatsPerSecond: beats_per_second,
+    socketServer: socket_server,
+    socketPort: socket_port,
     processTrack: (track, user) => {
         if (track && !!track.name) {
             return new Promise((resolve, reject) => {
@@ -132,7 +132,7 @@ module.exports = {
                                 }
                             } else {
                                 var options = {
-                                        uri: `http://developer.echonest.com/api/v4/artist/terms?api_key=${ECHONEST_API_KEY}&format=json&name=${encodeURIComponent(track.artist['#text'])}`,
+                                        uri: `http://developer.echonest.com/api/v4/artist/terms?api_key=${echonestApiKey}&format=json&name=${encodeURIComponent(track.artist['#text'])}`,
                                         json: true
                                     },
                                     genres = [],
@@ -143,7 +143,7 @@ module.exports = {
                                             data.response.terms.forEach((item) => genres.push(item.name));
                                         }
 
-                                        options.uri = `http://developer.echonest.com/api/v4/song/search?api_key=${ECHONEST_API_KEY}&format=json&results=1&artist=${encodeURIComponent(track.artist['#text'])}&title=${encodeURIComponent(track.name)}&bucket=audio_summary`;
+                                        options.uri = `http://developer.echonest.com/api/v4/song/search?api_key=${echonestApiKey}&format=json&results=1&artist=${encodeURIComponent(track.artist['#text'])}&title=${encodeURIComponent(track.name)}&bucket=audio_summary`;
 
                                         return rs(options)
                                             .then((data) => {
@@ -264,7 +264,7 @@ module.exports = {
         if (song && artist) {
             return new Promise((resolve, reject) => {
                 var options = {
-                    uri: `http://developer.echonest.com/api/v4/song/search?api_key=${ECHONEST_API_KEY}&format=json&results=1&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(song)}&bucket=audio_summary`,
+                    uri: `http://developer.echonest.com/api/v4/song/search?api_key=${echonestApiKey}&format=json&results=1&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(song)}&bucket=audio_summary`,
                     json: true
                 }
                 rs(options)

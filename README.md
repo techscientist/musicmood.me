@@ -19,12 +19,12 @@ First, you need to create a `config.json` file in the root of the `node` folder 
 
 ```json
 {
-    "ECHONEST_API_KEY": "",
-    "LASTFM_API_KEY": "",
-    "LASTFM_API_SEC": "",
-    "SPOTIFY_CLIENT_ID": "",
-    "SPOTIFY_CLIENT_SEC":"",
-    "SPOTIFY_REDIRECT_URI":""
+    "echonestApiKey": "",
+    "lastFmApiKey": "",
+    "lastFmApiSecret": "",
+    "spotifyClientId": "",
+    "spotifyClientSecret":"",
+    "spotifyRedirectUri":""
 }
 ```
 

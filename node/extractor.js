@@ -16,8 +16,8 @@ processing = {};
 var Moods = new Moods();
 
 var lastfm = new LastFmNode({
-        api_key: tools.LASTFM_API_KEY,
-        secret: tools.LASTFM_API_SEC
+        api_key: tools.lastFmApiKey,
+        secret: tools.lastFmApiSecret
     }),
     main_index = -1,
     harper, total, duration;
@@ -26,7 +26,7 @@ var ProcessUser = function(user, index, track, harper, mood) {
 
     this.user = user;
     this.index = index;
-    this.beats = tools.BEATS_PER_SECOND;
+    this.beats = tools.beatsPerSecond;
     this.track = track;
     this.harper = harper;
     this.socket = io;
@@ -199,6 +199,6 @@ io.on('connection', (socket) => {
     })
 });
 
-http.listen(tools.SOCKET_PORT);
+http.listen(tools.socketPort);
 
 initVisualization();

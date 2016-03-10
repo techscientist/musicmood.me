@@ -2,14 +2,14 @@ var os = require('os');
 var tools = require('./lib/tools');
 
 var ioc = require('socket.io-client'),
-    client = ioc.connect(`${tools.SOCKET_SERVER}:${tools.SOCKET_PORT}`);
+    client = ioc.connect(`${tools.socketServer}:${tools.socketPort}`);
 
 var tools = require('./lib/tools');
 var SerialPort = require("serialport");
 
 var serial_enabled = true;
 
-var beats_per_second = tools.BEATS_PER_SECOND; //the same value needs to be on tools.js to sync
+var beats_per_second = tools.beatsPerSecond; //the same value needs to be on tools.js to sync
 var serialPort;
 var buffer = undefined;
 var cache_buffer = undefined;
@@ -47,7 +47,7 @@ function writeBuffer(tmp_buffer) {
 
 client.on('connect', function() {
         console.log('Connected to port 3030');
-        timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
+        timer = setTimeout(SerialWrite, 900 / tools.beatsPerSecond);
     })
     .on('disconnect', function() {
         console.log('Disconnected from port 3030');
@@ -104,7 +104,7 @@ function SerialWrite() {
         writeBuffer(buffer);
         cache_buffer = JSON.stringify(tmp_buffer);
     }
-    timer = setTimeout(SerialWrite, 900 / tools.BEATS_PER_SECOND);
+    timer = setTimeout(SerialWrite, 900 / tools.beatsPerSecond);
 }
 
 function initSerial() {

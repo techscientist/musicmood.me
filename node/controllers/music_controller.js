@@ -142,7 +142,7 @@ module.exports = {
                                 if (item) {
                                     resolve(item);
                                 } else {
-                                    var url = `http://developer.echonest.com/api/v4/song/search?api_key=${tools.ECHONEST_API_KEY}&format=json&results=100&mood=${mood}&sort=mode-desc`;
+                                    var url = `http://developer.echonest.com/api/v4/song/search?api_key=${tools.echonestApiKey}&format=json&results=100&mood=${mood}&sort=mode-desc`;
                                     rs({
                                             uri: url,
                                             json: true

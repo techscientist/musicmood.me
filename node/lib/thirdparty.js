@@ -9,21 +9,21 @@ var spotify, lastFmApi, lastFmNode, uaInstance;
 module.exports = {
     getSpotifyApi: function() {
         return spotify || (spotify = new SpotifyWebApi({
-            clientId: tools.SPOTIFY_CLIENT_ID,
-            clientSecret: tools.SPOTIFY_CLIENT_SECRET,
-            redirectUri: tools.SPOTIFY_REDIRECT_URI
+            clientId: tools.spotifyClientId,
+            clientSecret: tools.spotifyClientSecret,
+            redirectUri: tools.spotifyRedirectUri
         }));
     },
     getLastFmApi: function() {
         return lastFmApi || (lastFmApi = new LastfmAPI({
-            'api_key': tools.LASTFM_API_KEY,
-            'secret': tools.LASTFM_API_SEC
+            'api_key': tools.lastFmApiKey,
+            'secret': tools.lastFmApiSecret
         }));
     },
     getLastfmNodeApi: function() {
         return lastFmNode || (lastFmNode = new LastFmNode({
-            api_key: tools.LASTFM_API_KEY,
-            secret: tools.LASTFM_API_SEC
+            api_key: tools.lastFmApiKey,
+            secret: tools.lastFmApiSecret
         }));
     },
     getAnalyticsApi: function() {

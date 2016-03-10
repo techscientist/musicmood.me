@@ -24,9 +24,12 @@ First, you need to create a `config.json` file in the root of the `node` folder 
     "LASTFM_API_SEC": "",
     "SPOTIFY_CLIENT_ID": "",
     "SPOTIFY_CLIENT_SEC":"",
-    "SPOTIFY_REDIRECT_URI":""
+    "SPOTIFY_REDIRECT_URI":"",
+    "analyticsKey": ""
 }
 ```
+
+> **Notice**: `analyticsKey` is optional. If you do not intend to use analytics, skip this key.
 
 You can get the keys [here](http://www.last.fm/api/account/create) [here](http://developer.echonest.com/account/register) and [here](https://developer.spotify.com).
 

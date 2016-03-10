@@ -1,5 +1,5 @@
 language: node_js
 node_js:
   - "5.6.0"
-script: cd node && npm install && npm test
+script: cd node && npm install && touch config.json && echo '{}' > config.json && npm test
 after_success: npm run coverage

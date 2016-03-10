@@ -740,32 +740,32 @@ canvas {
         height: auto;
     }
     input[type="text"] {
-        font: 55px 'pragmatamedium', sans-serif;
+        font: 40px 'pragmatamedium', sans-serif;
         width: 88%;
     }
     ::-webkit-input-placeholder {
         /* Chrome/Opera/Safari */
         color: #fff;
-        font: 45px 'pragmatamedium', sans-serif;
-        line-height: 50px;
+        font: 40px 'pragmatamedium', sans-serif;
+        line-height: 40px;
     }
     ::-moz-placeholder {
         /* Firefox 19+ */
         color: #fff;
-        font: 45px 'pragmatamedium', sans-serif;
-        line-height: 50px;
+        font: 40px 'pragmatamedium', sans-serif;
+        line-height: 40px;
     }
     :-ms-input-placeholder {
         /* IE 10+ */
         color: #fff;
-        font: 45px 'pragmatamedium', sans-serif;
-        line-height: 50px;
+        font: 40px 'pragmatamedium', sans-serif;
+        line-height: 40px;
     }
     :-moz-placeholder {
         /* Firefox 18- */
         color: #fff;
-        font: 50px 'pragmatamedium', sans-serif;
-        line-height: 50px;
+        font: 40px 'pragmatamedium', sans-serif;
+        line-height: 40px;
     }
     .musiclist {
         width: 330px;

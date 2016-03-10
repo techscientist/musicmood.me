@@ -107,6 +107,7 @@ module.exports = {
     SPOTIFY_CLIENT_ID: config.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: config.SPOTIFY_CLIENT_SECRET,
     SPOTIFY_REDIRECT_URI: config.SPOTIFY_REDIRECT_URI,
+    analyticsKey: config.analyticsKey,
     BEATS_PER_SECOND: beats_per_second,
     SOCKET_SERVER: socket_server,
     SOCKET_PORT: socket_port,

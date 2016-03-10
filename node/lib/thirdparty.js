@@ -26,8 +26,18 @@ module.exports = {
             secret: tools.lastFmApiSecret
         }));
     },
-    getAnalyticsApi: function() {
-        // FIXME: Move to a settings module
-        return uaInstance || (uaInstance = ua('UA-74495247-1'));
+    recordUAEvent: function() {
+        if(tools.analyticsKey && tools.analyticsKey.length) {
+            uaInstance = uaInstance || ua(tools.analyticsKey);
+            try {
+                var ev = uaInstance.event.apply(uaInstance, arguments);
+                if(ev) {
+                    ev.save();
+                }
+            } catch(ex) {
+                console.error(`Error registering UA event with parameters ${arguments}:`);
+                console.error(ex);
+            }
+        }
     }
 };

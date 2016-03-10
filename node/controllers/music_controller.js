@@ -40,7 +40,7 @@ module.exports = {
                     msg: ex
                 });
             });
-        thirdparty.getAnalyticsApi().event("Backend", "get_song", "Song", artist + ' ' + song).send()
+        thirdparty.recordUAEvent('Backend', 'get_song', 'Song', `${artist} ${song}`);
     },
     getPlaylistForMood: (req, res) => {
         // FIXME: Rewrite this whole logic

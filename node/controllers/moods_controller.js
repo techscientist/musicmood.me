@@ -43,6 +43,6 @@ module.exports = {
                     msg: 'Artist/Song could not be found.'
                 });
             });
-        thirdparty.getAnalyticsApi.event('Backend', 'api_mood', 'Song', artist + ' ' + song).send();
+        thirdparty.recordUAEvent('Backend', 'api_mood', 'Song', `${artist} ${song}`);
     }
 };

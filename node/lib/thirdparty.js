@@ -27,7 +27,6 @@ module.exports = {
         }));
     },
     recordUAEvent: function() {
-        console.log('here we are', tools.analyticsKey);
         if (tools.analyticsKey && tools.analyticsKey.length) {
             uaInstance = uaInstance || ua(tools.analyticsKey);
             try {
@@ -37,8 +36,10 @@ module.exports = {
                 }
             } catch (ex) {
                 console.error(`Error registering UA event with parameters ${arguments}:`);
-                console.error(ex);
+                throw new Error(ex);
             }
+        } else {
+            throw new Error('You need to provide a key');
         }
     }
 };

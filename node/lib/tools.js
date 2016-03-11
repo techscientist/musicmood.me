@@ -107,6 +107,7 @@ module.exports = {
     spotifyClientId: config.spotifyClientId,
     spotifyClientSecret: config.spotifyClientSecret,
     spotifyRedirectUri: config.spotifyRedirectUri,
+    analyticsKey: config.analyticsKey,
     beatsPerSecond: beats_per_second,
     socketServer: socket_server,
     socketPort: socket_port,

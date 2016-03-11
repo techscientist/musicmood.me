@@ -27,14 +27,15 @@ module.exports = {
         }));
     },
     recordUAEvent: function() {
-        if(tools.analyticsKey && tools.analyticsKey.length) {
+        console.log('here we are', tools.analyticsKey);
+        if (tools.analyticsKey && tools.analyticsKey.length) {
             uaInstance = uaInstance || ua(tools.analyticsKey);
             try {
                 var ev = uaInstance.event.apply(uaInstance, arguments);
-                if(ev) {
+                if (ev) {
                     ev.save();
                 }
-            } catch(ex) {
+            } catch (ex) {
                 console.error(`Error registering UA event with parameters ${arguments}:`);
                 console.error(ex);
             }

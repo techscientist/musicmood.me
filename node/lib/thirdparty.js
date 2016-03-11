@@ -15,13 +15,13 @@ module.exports = {
         }));
     },
     getLastFmApi: function() {
-        return lastFmApi || (lastFmApi = new LastfmAPI({
+        return lastFmApi || (lastFmApi = new LastFmApi({
             'api_key': tools.lastFmApiKey,
             'secret': tools.lastFmApiSecret
         }));
     },
     getLastfmNodeApi: function() {
-        return lastFmNode || (lastFmNode = new LastFmNode({
+        return lastFmNode || (lastFmNode = new LastFmApiNode({
             api_key: tools.lastFmApiKey,
             secret: tools.lastFmApiSecret
         }));
@@ -35,11 +35,8 @@ module.exports = {
                     ev.save();
                 }
             } catch (ex) {
-                console.error(`Error registering UA event with parameters ${arguments}:`);
-                throw new Error(ex);
+                return undefined;
             }
-        } else {
-            throw new Error('You need to provide a key');
         }
     }
 };

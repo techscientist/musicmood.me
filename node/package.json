@@ -7,6 +7,7 @@
   "scripts": {
     "test": "find spec -name \"*.js\" | xargs node_modules/.bin/mocha",
     "coverage": "node_modules/.bin/nyc npm test",
+    "coveralls": "npm test && node_modules/.bin/nyc report --reporter=text-lcov | node_modules/.bin/coveralls",
     "start": "node app.js"
   },
   "dependencies": {

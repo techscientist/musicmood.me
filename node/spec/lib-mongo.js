@@ -7,15 +7,18 @@ var Mongo = require("../lib/mongo");
 
 describe('Mongo', function() {
     describe('initPool when MongoClient fails', function() {
-        var mongoStub;
+        var mongoStub,
+            sandbox;
         before(function() {
-            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+            sandbox = sinon.sandbox.create();
+            mongoStub = sandbox.stub(MongoClient, 'connect', function(url, options, callback) {
                 callback(new Error('Generic Error'));
             });
         });
 
         after(function() {
-            mongoStub.restore();
+            console.log(mongoStub);
+            sandbox.restore();
         });
 
         it('should fail', function() {
@@ -24,15 +27,17 @@ describe('Mongo', function() {
     });
 
     describe('initPool when MongoClient succed', function() {
-        var mongoStub;
+        var mongoStub,
+            sandbox;
         before(function() {
-            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+            sandbox = sinon.sandbox.create();
+            mongoStub = sandbox.stub(MongoClient, 'connect', function(url, options, callback) {
                 return true;
             });
         });
 
         after(function() {
-            mongoStub.restore();
+            sandbox.restore();
         });
 
         it('should not fail', function() {
@@ -41,15 +46,17 @@ describe('Mongo', function() {
     });
 
     describe('initPool when MongoClient succed with callback', function() {
-        var mongoStub;
+        var mongoStub,
+            sandbox;
         before(function() {
-            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+            sandbox = sinon.sandbox.create();
+            mongoStub = sandbox.stub(MongoClient, 'connect', function(url, options, callback) {
                 callback();
             });
         });
 
         after(function() {
-            mongoStub.restore();
+            sandbox.restore();
         });
 
         it('should not fail', function() {
@@ -60,15 +67,17 @@ describe('Mongo', function() {
     });
 
     describe('getInstance when MongoClient succeed', function() {
-        var mongoStub;
+        var mongoStub,
+            sandbox;
         before(function() {
-            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+            sandbox = sinon.sandbox.create();
+            mongoStub = sandbox.stub(MongoClient, 'connect', function(url, options, callback) {
                 callback();
             });
         });
 
         after(function() {
-            mongoStub.restore();
+            sandbox.restore();
         });
 
         it('should not fail', function() {
@@ -77,16 +86,18 @@ describe('Mongo', function() {
     });
 
     describe('getInstance when MongoClient has ben initiated', function() {
-        var mongoStub;
+        var mongoStub,
+            sandbox;
         before(function() {
-            mongoStub = sinon.stub(MongoClient, 'connect', function(url, options, callback) {
+            sandbox = sinon.sandbox.create();
+            mongoStub = sandbox.stub(MongoClient, 'connect', function(url, options, callback) {
                 callback(false, true);
             });
             Mongo = Mongo.initPool();
         });
 
         after(function() {
-            mongoStub.restore();
+            sandbox.restore();
         });
 
         it('should not fail', function() {

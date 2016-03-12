@@ -1,5 +1,4 @@
 var sinon = require("sinon"),
-    MongoClient = require('mongodb').MongoClient,
     expect = require('chai').expect,
     assert = require('chai').assert;
 

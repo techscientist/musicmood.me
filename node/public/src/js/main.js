@@ -431,7 +431,7 @@ if (isIe()) {
         }, 700);
         $('.moodfinal .start').addClass('hide');
         $('.moodfinal .share').addClass('hide');
-        $('.featured').removeClass('hide').addClass('show');
+        //$('.featured').removeClass('hide').addClass('show');
         $('.player').removeClass('show').addClass('hide');
     });
 

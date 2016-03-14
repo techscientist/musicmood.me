@@ -373,6 +373,7 @@ if (isIe()) {
     $('.musiclist').on('click', 'li', function() {
         var song = $(this).find('span').eq(0).text();
         var artist = $(this).find('span').eq(1).text();
+        var image = $(this).find('img').attr('src');
         if (artist !== 'Music Not Found') {
             $('.musiclist').removeClass('show').addClass('hide');
             $('.songSearch').val('Processing...');
@@ -398,7 +399,11 @@ if (isIe()) {
                     setTimeout(function() {
                         $('.moodfinal').addClass('show');
                         $('.listen').attr('href',data.playlist_url);
-                        $('.song_name').html(song + ' (' + artist + ')');
+                        $('.featured').addClass('hide');
+                        $('.player').removeClass('hide').addClass('show');
+                        $('.player .song').html(song);
+                        $('.player .artist').html(artist);
+                        $('.player img').attr('src',image);
                     }, 1000);
                     moodboard(preview_url);
                     moodScroll(data.mood.colorIndex - 2);
@@ -426,6 +431,8 @@ if (isIe()) {
         }, 700);
         $('.moodfinal .start').addClass('hide');
         $('.moodfinal .share').addClass('hide');
+        $('.featured').removeClass('hide').addClass('show');
+        $('.player').removeClass('show').addClass('hide');
     });
 
     function volume() {

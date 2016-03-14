@@ -64,7 +64,7 @@ h1 {
     text-transform: uppercase;
     line-height: 17px;
     margin-left: 10px;
-    display: -webkit-inline-box;
+    display: inline;
     font-size: 20px;
     opacity: 0;
 }
@@ -354,7 +354,7 @@ input[type="text"]:focus {
 }
 
 /*------------------------------------------
-/* 8 - MEDIA QUERIES
+/* 8 - FOOTER
 /*------------------------------------------*/
 
 footer {
@@ -383,6 +383,20 @@ footer .spotifybrand img {
     display: block;
     float: right;
     margin-left: 15px;
+}
+footer .player {
+    position: absolute;
+    left: 50px;
+    bottom: 50px;
+    width:50%;
+}
+footer .player span.song {
+    color: #ffffff;
+    display: block;
+}
+footer .player img {
+    float: left;
+    margin: 0px 10px 0px 0px;
 }
 
 /*------------------------------------------
@@ -489,8 +503,8 @@ footer .spotifybrand img {
     margin: auto;
     /* background: #eee; */
     padding-right: 20px;
-/*    mask: url(../img/mask.svg);*/
-    -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.00, rgba(0,0,0,0)), color-stop(0.25, rgba(0,0,0,1)), color-stop(0.50, rgba(0,0,0,1)), color-stop(0.75, rgba(0,0,0,1)), color-stop(1.00, rgba(0,0,0,0)));
+    /*    mask: url(../img/mask.svg);*/
+    -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.00, rgba(0, 0, 0, 0)), color-stop(0.25, rgba(0, 0, 0, 1)), color-stop(0.50, rgba(0, 0, 0, 1)), color-stop(0.75, rgba(0, 0, 0, 1)), color-stop(1.00, rgba(0, 0, 0, 0)));
     overflow: hidden;
     top: -62px;
     left: 10px;
@@ -681,7 +695,6 @@ canvas {
     line-height: 1.6em;
     margin-bottom: 10px;
 }
-
 .readme p a, .featured {
     color: #464646;
     position: relative;
@@ -780,8 +793,8 @@ canvas {
         left: 15px;
         top: 20%;
     }
-    .moodfinal h4{
-        padding-top:10px;
+    .moodfinal h4 {
+        padding-top: 10px;
     }
     .readme {
         width: 280px;

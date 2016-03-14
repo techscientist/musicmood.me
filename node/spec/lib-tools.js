@@ -5,68 +5,191 @@ var sinon = require("sinon"),
 
 describe("Tools", function() {
     describe("logger instance", function() {
-        it("should not fail", function() {
-            expect(tools.logger()).to.be.an('undefined');
+        describe('called without a string', function() {
+            it("should be false", function() {
+                expect(tools.logger()).to.be.false;
+            });
+        });
+        describe('called with a string', function() {
+            it("should be true", function() {
+                expect(tools.logger('test')).to.be.true;
+            });
         });
     });
 
-    describe('getInstance when MongoClient succeed update', function() {
-        var mongoStub,
-            sandbox;
-        before(function() {
-            sandbox = sinon.sandbox.create();
-            mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
-                db = {};
-                db.collection = function(collection) {
-                    return {
-                        updateOne: function(who, what, callback) {
-                            callback(false, true);
+    describe('updateUserInfo', function() {
+        describe('update', function() {
+            var mongoStub,
+                sandbox;
+            before(function() {
+                sandbox = sinon.sandbox.create();
+                mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
+                    db = {};
+                    db.collection = function(collection) {
+                        return {
+                            updateOne: function(who, what, callback) {
+                                callback(false, true);
+                            }
                         }
-                    }
-                };
-                callback(db);
-            });
-        });
-
-        after(function() {
-            sandbox.restore();
-        });
-
-        it("should resolve", function() {
-            return tools.updateUserInfo({}, {})
-                .then(function(info) {
-                    expect(info).to.be.true;
-                })
-        });
-    });
-
-    describe('getInstance when MongoClient do not succeed update', function() {
-        var mongoStub,
-            sandbox;
-        before(function() {
-            sandbox = sinon.sandbox.create();
-            mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
-                db = {};
-                db.collection = function(collection) {
-                    return {
-                        updateOne: function(who, what, callback) {
-                            callback(true, false);
-                        }
-                    }
-                };
-                callback(db);
-            });
-        });
-
-        after(function() {
-            sandbox.restore();
-        });
-
-        it("should reject", function() {
-            return tools.updateUserInfo({}, {})
-                .catch(function(info) {
-                    expect(info).to.be.true;
+                    };
+                    callback(db);
                 });
+            });
+
+            after(function() {
+                sandbox.restore();
+            });
+
+            it("should succeed", function() {
+                return tools.updateUserInfo({}, {})
+                    .then(function(info) {
+                        expect(info).to.be.true;
+                    })
+            });
+        });
+
+        describe('update', function() {
+            var mongoStub,
+                sandbox;
+            before(function() {
+                sandbox = sinon.sandbox.create();
+                mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
+                    db = {};
+                    db.collection = function(collection) {
+                        return {
+                            updateOne: function(who, what, callback) {
+                                callback(true, false);
+                            }
+                        }
+                    };
+                    callback(db);
+                });
+            });
+
+            after(function() {
+                sandbox.restore();
+            });
+
+            it("should fail", function() {
+                return tools.updateUserInfo({}, {})
+                    .catch(function(info) {
+                        expect(info).to.be.true;
+                    });
+            });
+        });
+    });
+
+    describe('newUser', function() {
+        describe('user exists', function() {
+            var mongoStub,
+                sandbox;
+            before(function() {
+                sandbox = sinon.sandbox.create();
+                mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
+                    db = {};
+                    db.collection = function(collection) {
+                        return {
+                            find: function(what) {
+                                return {
+                                    count: function() {
+                                        return {
+                                            then: function(callback) {
+                                                callback(1);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    callback(db);
+                });
+            });
+            after(function() {
+                sandbox.restore();
+            });
+            it('should fail', function() {
+                return tools.newUser({"user": "chr0nu5"})
+                .catch(function(err) {
+                    expect(err).to.equal('USER_EXISTS');
+                });
+            })
+        });
+        describe('user do not exists', function() {
+            var mongoStub,
+                sandbox;
+            before(function() {
+                sandbox = sinon.sandbox.create();
+                mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
+                    db = {};
+                    db.collection = function(collection) {
+                        return {
+                            find: function(what) {
+                                return {
+                                    count: function() {
+                                        return {
+                                            then: function(callback) {
+                                                callback(0);
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            insertOne: function(what, callback) {
+                                callback(false, true);
+                            }
+                        }
+                    }
+                    callback(db);
+                });
+            });
+            after(function() {
+                sandbox.restore();
+            });
+            it('should not fail', function() {
+                return tools.newUser({"user": "chr0nu5"})
+                .then(function(r) {
+                    expect(r).to.be.true;
+                });
+            })
+        });
+        describe('user do not exists (error on mongo)', function() {
+            var mongoStub,
+                sandbox;
+            before(function() {
+                sandbox = sinon.sandbox.create();
+                mongoStub = sandbox.stub(mongo, 'getInstance', function(callback) {
+                    db = {};
+                    db.collection = function(collection) {
+                        return {
+                            find: function(what) {
+                                return {
+                                    count: function() {
+                                        return {
+                                            then: function(callback) {
+                                                callback(0);
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            insertOne: function(what, callback) {
+                                callback(true);
+                            }
+                        }
+                    }
+                    callback(db);
+                });
+            });
+            after(function() {
+                sandbox.restore();
+            });
+            it('should fail', function() {
+                return tools.newUser({"user": "chr0nu5"})
+                .catch(function(err) {
+                    expect(err).to.be.true;
+                });
+            })
         });
     });
 

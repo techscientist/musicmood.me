@@ -17,7 +17,6 @@ describe('Mongo', function() {
         });
 
         after(function() {
-            console.log(mongoStub);
             sandbox.restore();
         });
 

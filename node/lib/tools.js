@@ -374,29 +374,32 @@ module.exports = {
                             });
                         }
                     })
-                    .catch((err) => {
-                        reject(err);
-                    });
             })
         });
     },
     updateUserInfo: (who, what) => {
         return new Promise((resolve, reject) => {
             mongo.getInstance((db) => {
-                db.collection('users').updateOne(
-                    who, {
-                        $set: what
-                    }, (err, results) => {
-                        if (!err) {
-                            resolve(results);
-                        } else {
-                            reject(err);
-                        }
-                    })
+                db.collection('users')
+                    .updateOne(
+                        who, {
+                            $set: what
+                        }, (err, results) => {
+                            if (!err) {
+                                resolve(results);
+                            } else {
+                                reject(err);
+                            }
+                        })
             });
         });
     },
     logger: (string) => {
-        console.log(string);
+        if (string) {
+            console.log(string);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

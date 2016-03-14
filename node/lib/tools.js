@@ -262,8 +262,8 @@ module.exports = {
         }
     },
     searchSong: (song, artist) => {
-        if (song && artist) {
-            return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+            if (song && artist) {
                 var options = {
                     uri: `http://developer.echonest.com/api/v4/song/search?api_key=${echonestApiKey}&format=json&results=1&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(song)}&bucket=audio_summary`,
                     json: true
@@ -341,10 +341,10 @@ module.exports = {
                                 }
                             })
                     })
-            })
-        } else {
-            return Promise.reject('NO_MUSIC');
-        }
+            } else {
+                reject('NO_MUSIC');
+            }
+        })
     },
     newUser: (info) => {
         return new Promise((resolve, reject) => {

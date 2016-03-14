@@ -1,7 +1,26 @@
 var sinon = require("sinon"),
-    tools = require('../lib/tools.js'),
     mongo = require('../lib/mongo'),
+    proxyquire = require('proxyquire').noPreserveCache(),
     expect = require('chai').expect;
+
+var rs = (function() {
+    var _this = this;
+    var then = sinon.stub();
+    then.onCall(0)
+        .returns(
+            function(callback) {
+                console.log('teste de return');
+                callback();
+            }
+        );
+    return {
+        then: then
+    };
+})();
+
+var tools = proxyquire('../lib/tools.js', {
+    'request-promise': rs
+});
 
 describe("Tools", function() {
     describe("logger instance", function() {
@@ -109,10 +128,12 @@ describe("Tools", function() {
                 sandbox.restore();
             });
             it('should fail', function() {
-                return tools.newUser({"user": "chr0nu5"})
-                .catch(function(err) {
-                    expect(err).to.equal('USER_EXISTS');
-                });
+                return tools.newUser({
+                        "user": "chr0nu5"
+                    })
+                    .catch(function(err) {
+                        expect(err).to.equal('USER_EXISTS');
+                    });
             })
         });
         describe('user do not exists', function() {
@@ -147,10 +168,12 @@ describe("Tools", function() {
                 sandbox.restore();
             });
             it('should not fail', function() {
-                return tools.newUser({"user": "chr0nu5"})
-                .then(function(r) {
-                    expect(r).to.be.true;
-                });
+                return tools.newUser({
+                        "user": "chr0nu5"
+                    })
+                    .then(function(r) {
+                        expect(r).to.be.true;
+                    });
             })
         });
         describe('user do not exists (error on mongo)', function() {
@@ -185,12 +208,33 @@ describe("Tools", function() {
                 sandbox.restore();
             });
             it('should fail', function() {
-                return tools.newUser({"user": "chr0nu5"})
-                .catch(function(err) {
-                    expect(err).to.be.true;
-                });
+                return tools.newUser({
+                        "user": "chr0nu5"
+                    })
+                    .catch(function(err) {
+                        expect(err).to.be.true;
+                    });
             })
         });
     });
+
+    describe('searchSong', function() {
+        describe('withou a song and an artist', function() {
+            it('shout fail', function() {
+                return tools.searchSong('', '')
+                    .catch(function(err) {
+                        expect(err).to.equal('NO_MUSIC');
+                    });
+            })
+        });
+        // describe('not a response or not a json response', function() {
+        //     it('shout fail', function() {
+        //         return tools.searchSong('great', 'song')
+        //             .catch(function(err) {
+        //                 expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
+        //             });
+        //     })
+        // });
+    })
 
 });

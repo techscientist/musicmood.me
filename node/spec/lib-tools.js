@@ -3,20 +3,17 @@ var sinon = require("sinon"),
     proxyquire = require('proxyquire').noPreserveCache(),
     expect = require('chai').expect;
 
-var rs = (function() {
-    var _this = this;
+var rs = function(url) {
     var then = sinon.stub();
-    then.onCall(0)
-        .returns(
-            function(callback) {
-                console.log('teste de return');
-                callback();
-            }
-        );
+    then.onCall(0).returns(
+        function() {
+            console.log(url);
+        }
+    )
     return {
         then: then
-    };
-})();
+    }
+};
 
 var tools = proxyquire('../lib/tools.js', {
     'request-promise': rs
@@ -219,7 +216,7 @@ describe("Tools", function() {
     });
 
     describe('searchSong', function() {
-        describe('withou a song and an artist', function() {
+        describe('without a song and an artist', function() {
             it('shout fail', function() {
                 return tools.searchSong('', '')
                     .catch(function(err) {

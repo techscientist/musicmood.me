@@ -399,7 +399,7 @@ if (isIe()) {
                     setTimeout(function() {
                         $('.moodfinal').addClass('show');
                         $('.listen').attr('href',data.playlist_url);
-                        $('.featured').addClass('hide');
+                        $('.featured').addClass('hide').removeClass('show');
                         $('.player').removeClass('hide').addClass('show');
                         $('.player .song').html(song);
                         $('.player .artist').html(artist);

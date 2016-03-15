@@ -3,15 +3,71 @@ var sinon = require("sinon"),
     proxyquire = require('proxyquire').noPreserveCache(),
     expect = require('chai').expect;
 
+var called = 0;
 var rs = function(url) {
-    var then = sinon.stub();
-    then.onCall(0).returns(
-        function() {
-            console.log(url);
-        }
-    )
-    return {
-        then: then
+    called += 1;
+    console.log('times called:', called);
+    switch (called) {
+        // first and second tests only need empty results
+        case 1:
+            return {
+                then: this.then = function(callback) {
+                    callback();
+                }
+            }
+            break;
+        case 2:
+            return {
+                then: this.then = function(callback) {
+                    callback({});
+                }
+            }
+            break;
+        // third and fourth tests only need empty results
+        case 3:
+            return {
+                then: this.then = function(callback) {
+                    callback();
+                }
+            }
+            break;
+        case 4:
+            return {
+                then: this.then = function(callback) {
+                    callback({});
+                }
+            }
+            break;
+        // this is for the spotify returning a preview url on a item
+        case 5:
+            return {
+                then: this.then = function(callback) {
+                    callback();
+                }
+            }
+            break;
+        case 6:
+            return {
+                then: this.then = function(callback) {
+                    callback({
+                        tracks: {
+                            items: [
+                                {
+                                    artists: [
+                                        {
+                                            name: 'artist'
+                                        }
+                                    ],
+                                    preview_url: 'htt://www.google.com'
+                                }
+                            ]
+                        }
+                    });
+                }
+            }
+            break;
+        default:
+
     }
 };
 
@@ -224,14 +280,33 @@ describe("Tools", function() {
                     });
             })
         });
-        // describe('not a response or not a json response', function() {
-        //     it('shout fail', function() {
-        //         return tools.searchSong('great', 'song')
-        //             .catch(function(err) {
-        //                 expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
-        //             });
-        //     })
-        // });
+        // rs 1 and 2
+        describe('not a response or not a json response (spotify)', function() {
+            it('shout fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .catch(function(err) {
+                        expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
+                    });
+            })
+        });
+        // rs 1 and 2
+        describe('not a response or not a json response (itunes)', function() {
+            it('shout fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .catch(function(err) {
+                        expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
+                    });
+            })
+        });
+        // rs 3 and 4
+        describe('return a preview url from spotify', function() {
+            it('shout not fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .then(function(json) {
+                        expect(json).to.have.all.keys(['preview_url','energy','valence']);
+                    });
+            })
+        });
     })
 
 });

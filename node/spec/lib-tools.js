@@ -3,71 +3,12 @@ var sinon = require("sinon"),
     proxyquire = require('proxyquire').noPreserveCache(),
     expect = require('chai').expect;
 
-var called = 0;
+var rsResponses = [];
 var rs = function(url) {
-    called += 1;
-    console.log('times called:', called);
-    switch (called) {
-        // first and second tests only need empty results
-        case 1:
-            return {
-                then: this.then = function(callback) {
-                    callback();
-                }
-            }
-            break;
-        case 2:
-            return {
-                then: this.then = function(callback) {
-                    callback({});
-                }
-            }
-            break;
-        // third and fourth tests only need empty results
-        case 3:
-            return {
-                then: this.then = function(callback) {
-                    callback();
-                }
-            }
-            break;
-        case 4:
-            return {
-                then: this.then = function(callback) {
-                    callback({});
-                }
-            }
-            break;
-        // this is for the spotify returning a preview url on a item
-        case 5:
-            return {
-                then: this.then = function(callback) {
-                    callback();
-                }
-            }
-            break;
-        case 6:
-            return {
-                then: this.then = function(callback) {
-                    callback({
-                        tracks: {
-                            items: [
-                                {
-                                    artists: [
-                                        {
-                                            name: 'artist'
-                                        }
-                                    ],
-                                    preview_url: 'htt://www.google.com'
-                                }
-                            ]
-                        }
-                    });
-                }
-            }
-            break;
-        default:
-
+    return {
+        then: function(cb) {
+            cb(rsResponses.shift());
+        }
     }
 };
 
@@ -280,33 +221,112 @@ describe("Tools", function() {
                     });
             })
         });
-        // rs 1 and 2
+
         describe('not a response or not a json response (spotify)', function() {
-            it('shout fail', function() {
+            before(() => {
+                rsResponses = [{}, {}];
+            });
+
+            it('should fail', function() {
                 return tools.searchSong('song', 'artist')
                     .catch(function(err) {
                         expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
                     });
             })
         });
-        // rs 1 and 2
-        describe('not a response or not a json response (itunes)', function() {
-            it('shout fail', function() {
-                return tools.searchSong('song', 'artist')
-                    .catch(function(err) {
-                        expect(err).to.equal('NO_PREVIEW_FROM_SPOTIFY');
-                    });
-            })
-        });
-        // rs 3 and 4
+
         describe('return a preview url from spotify', function() {
-            it('shout not fail', function() {
+            before(() => {
+                rsResponses = [{}, {
+                    tracks: {
+                        items: [{
+                            artists: [{
+                                name: 'artist'
+                            }],
+                            preview_url: 'htt://www.google.com'
+                        }]
+                    }
+                }];
+            });
+            it('should not fail', function() {
                 return tools.searchSong('song', 'artist')
                     .then(function(json) {
-                        expect(json).to.have.all.keys(['preview_url','energy','valence']);
+                        expect(json).to.have.all.keys(['preview_url', 'energy', 'valence']);
                     });
             })
         });
-    })
 
+        describe('not a response or not a json response (itunes)', function() {
+            before(() => {
+                rsResponses = [{}, {
+                    tracks: {
+                        items: [{
+                            artists: [{
+                                name: 'artist'
+                            }],
+                            preview_url: ''
+                        }]
+                    }
+                }, {}]
+            });
+            it('should fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .catch(function(err) {
+                        expect(err).to.equal('NO_PREVIEW_FROM_APPLE');
+                    });
+            })
+        });
+
+        describe('return a preview url from itunes', function() {
+            before(() => {
+                rsResponses = [{}, {
+                    tracks: {
+                        items: [{
+                            artists: [{
+                                name: 'artist'
+                            }],
+                            preview_url: ''
+                        }]
+                    }
+                }, {
+                    results: [{
+                        artistName: 'artist',
+                        previewUrl: ''
+                    }]
+                }]
+            });
+            it('should fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .catch(function(err) {
+                        expect(err).to.equal('NO_PREVIEW_FROM_APPLE');
+                    });
+            })
+        });
+
+        describe('return a preview url from itunes', function() {
+            before(() => {
+                rsResponses = [{}, {
+                    tracks: {
+                        items: [{
+                            artists: [{
+                                name: 'artist'
+                            }],
+                            preview_url: ''
+                        }]
+                    }
+                }, {
+                    results: [{
+                        artistName: 'artist',
+                        previewUrl: 'http://www.google.com'
+                    }]
+                }]
+            });
+            it('should not fail', function() {
+                return tools.searchSong('song', 'artist')
+                    .then(function(json) {
+                        expect(json).to.have.all.keys(['preview_url', 'energy', 'valence']);
+                    });
+            })
+        });
+    });
 });

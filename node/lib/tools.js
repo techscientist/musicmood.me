@@ -264,6 +264,10 @@ module.exports = {
     searchSong: (song, artist) => {
         return new Promise((resolve, reject) => {
             if (song && artist) {
+                var options = {
+                    uri: ``,
+                    json: true
+                }
                 var energy = 0;
                 var valence = 0;
                 options.uri = `https://api.spotify.com/v1/search?query=${encodeURIComponent(song+' '+artist)}&offset=0&limit=50&type=track`;
